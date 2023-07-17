@@ -1,0 +1,93 @@
+{
+	"private": true,
+	"author": "wox team",
+	"license": "MIT",
+	"engines": {
+		"pnpm": ">=6",
+		"node": ">=14"
+	},
+	"pnpm": {
+		"peerDependencyRules": {
+			"allowAny": [
+				"react",
+				"react-dom",
+				"@types/react",
+				"@types/react-dom"
+			],
+			"ignoreMissing": [
+				"react",
+				"react-dom",
+				"@babel/*",
+				"@types/*"
+			]
+		}
+	},
+	"workspaces": [
+		"./packages/*"
+	],
+	"scripts": {
+		"build": "cross-env FORCE_COLOR=1 turbo run build",
+		"clean": "cross-env turbo run clean",
+		"dev": "cross-env FORCE_COLOR=1 turbo run dev --no-cache --parallel --continue",
+		"lint": "cross-env tsc && eslint \"src/**/*.{ts,tsx,mdx}\"",
+		"format": "cross-env prettier --write \"src/**/*.{ts,tsx,mdx}\"",
+		"test": "cross-env vitest run",
+		"test:watch": "cross-env vitest --watch",
+		"test:ui": "cross-env pnpm test --ui",
+		"test:coverage": "cross-env pnpm test --coverage",
+		"bench": "cross-env tsx bench/main.ts",
+		"bench:out": "cross-env DEBUG=use:output tsx bench/main.ts",
+		"changeset": "cross-env changeset",
+		"version-packages": "cross-env changeset version",
+		"release": "cross-env turbo run build && changeset publish"
+	},
+	"devDependencies": {
+		"@changesets/cli": "^2.26.2",
+		"@react-aria/focus": "3.12.1",
+		"@testing-library/dom": "9.3.0",
+		"@testing-library/jest-dom": "5.16.5",
+		"@testing-library/react": "14.0.0",
+		"@testing-library/react-hooks": "8.0.1",
+		"@testing-library/user-event": "14.4.3",
+		"@types/debug": "^4.1.8",
+		"@types/react": "18.2.7",
+		"@types/react-dom": "18.2.4",
+		"@types/testing-library__jest-dom": "5.14.6",
+		"@typescript-eslint/eslint-plugin": "5.59.8",
+		"@typescript-eslint/parser": "5.59.8",
+		"@vitejs/plugin-basic-ssl": "1.0.1",
+		"@vitejs/plugin-react": "4.0.0",
+		"@vitest/ui": "0.31.3",
+		"cross-env": "7.0.3",
+		"debug": "^4.3.4",
+		"eslint": "8.41.0",
+		"eslint-config-prettier": "8.8.0",
+		"eslint-plugin-jest-dom": "4.0.3",
+		"eslint-plugin-jsx-a11y": "6.7.1",
+		"eslint-plugin-prettier": "4.2.1",
+		"eslint-plugin-react": "7.32.2",
+		"eslint-plugin-react-hooks": "4.6.0",
+		"happy-dom": "9.20.3",
+		"husky": "8.0.3",
+		"jsdom": "22.1.0",
+		"lint-staged": "^13.2.3",
+		"prettier": "2.8.8",
+		"rollup-plugin-visualizer": "5.9.0",
+		"terser": "5.17.6",
+		"tinybench": "2.5.0",
+		"tsup": "6.7.0",
+		"tsx": "^3.12.7",
+		"turbo": "^1.10.8",
+		"typescript": "5.0.4",
+		"vite": "4.3.9",
+		"vite-plugin-checker": "^0.6.1",
+		"vite-plugin-inspect": "0.7.28",
+		"vite-tsconfig-paths": "4.2.0",
+		"vitest": "0.31.3"
+	},
+	"lint-staged": {
+		"*.ts?(x)": "eslint --fix",
+		"*.json": "prettier --write",
+		"*.?(s)css": "prettier --write"
+	}
+}
