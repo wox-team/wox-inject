@@ -1,11 +1,11 @@
 > **Warning**
 > This library is not production ready yet.
-
+> 
 <br />
 <br />
 
 <div align="center">
-  <img width="100px" src="https://github.com/wox-team/wox-inject/assets/8842821/5c458b6f-5403-4641-8d64-d782a94bc9ce" />
+  <img width="100px" src="https://github.com/wox-team/wox-inject/assets/8842821/d994610c-d755-437f-9ab8-6e705f50d4b2" />
 </div>
 
 <h1 align="center">wox inject</h1>
