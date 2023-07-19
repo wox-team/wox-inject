@@ -26,7 +26,7 @@ test('resolve, when obtaining the required singleton dependencies, should comple
 	expect(dep._1.value).toBeTruthy();
 });
 
-test.skip('resolve, when obtaining the required transient dependencies, should complete the dependency resolution', () => {
+test('resolve, when obtaining the required transient dependencies, should complete the dependency resolution', () => {
 	const deps = setupTransientResolution();
 
 	const scope = new DependencyScope();
@@ -96,15 +96,13 @@ test('resolve, when graphing identical nodes, should keep the same scoped instan
 	expect(_c1_d4._2._1).toBe(_c1_d4._3._1);
 });
 
-test.skip('resolve, when graphing identical nodes, should not keep the same transient instance until resolution complete', () => {
+test('resolve, when graphing identical nodes, should not keep the same transient instance until resolution complete', () => {
 	const deps = setupTransientResolution();
 
 	const scope_1 = new DependencyScope();
-	const container_1 = new InjectionContainer(scope_1);
+	const container = new InjectionContainer(scope_1);
 
-	container_1.resolve(deps[4]);
+	const _4 = container.resolve(deps[4]);
 
-	const _c1_d4 = container_1.resolve(deps[4]);
-
-	expect(_c1_d4._2._1).not.toBe(_c1_d4._3._1);
+	expect(_4._2._1).not.toBe(_4._3._1);
 });

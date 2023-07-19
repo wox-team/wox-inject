@@ -200,6 +200,8 @@ export class InjectionContainer {
 		// Here we're setting up a graph to plot out all the included dependencies of the resolving dependency.
 		const dependencyGraph = new Graph<NodeData>((node) => node.id);
 
+		const transients: Resolved<unknown>[] = [];
+
 		// Step one - Branch Step
 
 		const nodeStack = [this.step_one_createNode(registration, null)];
@@ -252,7 +254,7 @@ export class InjectionContainer {
 				if (typeof token === 'symbol') {
 					todo('Non ctor injection');
 				} else {
-					const args = this.step_two_retrieveArgs(token, dependenciesForEachDependency);
+					const args = this.step_two_retrieveArgs(token, dependenciesForEachDependency, transients);
 					const instance = new /* As Ctor */ token(...args);
 
 					const resolved = {
@@ -273,7 +275,7 @@ export class InjectionContainer {
 					}
 
 					if (registration.settings.lifeTime === ServiceLifetimes.Transient) {
-						todo('Resolve transients');
+						transients.push(resolved);
 
 						continue;
 					}
@@ -285,12 +287,19 @@ export class InjectionContainer {
 
 		// Step three - Retrieve step
 
-		const newResolved = this.#dependencyScope.scanResolved(registration);
-		if (newResolved == null) {
-			todo('Cannot get the complete resolution');
+		let instance: T;
+		if (registration.settings.lifeTime === ServiceLifetimes.Transient) {
+			instance = transients[0].instance as T;
+		} else {
+			const newResolved = this.#dependencyScope.scanResolved(registration);
+			if (newResolved == null) {
+				todo('Cannot get the complete resolution');
+			}
+
+			instance = newResolved.instance;
 		}
 
-		return newResolved.instance;
+		return instance;
 	}
 
 	private step_one_createNode<T>(registration: Registration<T>, parent: Registration<unknown> | null): NodeData {
@@ -306,17 +315,34 @@ export class InjectionContainer {
 		};
 	}
 
-	private step_two_retrieveArgs(token: Ctor<unknown>, depRef: Map<Token, Registration<unknown>[]>): unknown[] {
+	private step_two_retrieveArgs(
+		token: Ctor<unknown>,
+		depRef: Map<Token, Registration<unknown>[]>,
+		transients: Resolved<unknown>[],
+	): unknown[] {
 		const lookupDependencies = depRef.get(token) ?? [];
 		const args: unknown[] = [];
 
 		for (const dep of lookupDependencies) {
-			const resolved = this.#dependencyScope.scanResolved(dep);
-			if (resolved == null) {
-				todo('Failed to a resolved dep');
+			let instance: unknown;
+			if (dep.settings.lifeTime === ServiceLifetimes.Transient) {
+				const i = transients.findIndex((x) => x.instance instanceof (dep.token as any));
+				if (i === -1) {
+					todo('How to handle this case?');
+				}
+
+				instance = transients[i].instance;
+				transients.splice(i, 1);
+			} else {
+				const resolved = this.#dependencyScope.scanResolved(dep);
+				if (resolved == null) {
+					todo('Failed to a resolved dep');
+				}
+
+				instance = resolved.instance;
 			}
 
-			args.push(resolved.instance);
+			args.push(instance);
 		}
 
 		return args;
