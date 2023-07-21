@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"engines": {
 		"pnpm": ">=6",
-		"node": ">=14"
+		"node": ">=18"
 	},
 	"pnpm": {
 		"peerDependencyRules": {
@@ -34,12 +34,13 @@
 		"test": "cross-env vitest run",
 		"test:watch": "cross-env vitest --watch",
 		"test:ui": "cross-env pnpm test --ui",
+		"test:ci": "cross-env vitest run",
 		"test:coverage": "cross-env pnpm test --coverage",
 		"bench": "cross-env tsx bench/main.ts",
 		"bench:out": "cross-env DEBUG=use:output tsx bench/main.ts",
-		"changeset": "cross-env changeset",
 		"version-packages": "cross-env changeset version",
-		"release": "cross-env turbo run build && changeset publish"
+		"ci:changeset": "cross-env changeset",
+		"ci:release": "changeset publish"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.26.2",
