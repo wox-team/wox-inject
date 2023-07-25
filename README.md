@@ -77,7 +77,7 @@ Right now the focus is to provide stability for SPA usage. SSR will be on the ro
 
 ## Contributing
 
-Want to contribute to wox inject? Our [contributing guide](https://github.com/wox-team/wox-inject/blob/canary/CONTRIBUTING.md) has you covered.
+Want to contribute to wox inject? Our [contributing guide](https://github.com/wox-team/wox-inject/blob/canary/.github/CONTRIBUTING.md) has you covered.
 
 <br />
 
