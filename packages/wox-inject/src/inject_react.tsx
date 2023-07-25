@@ -22,6 +22,10 @@ export function useDependency<T>(dependencyToken: Token<T>): T {
 	return value;
 }
 
+export function useExposedInjectorContainer(): InjectionContainer {
+	return useContext(ResolutionContext);
+}
+
 export interface ControllerProtocol {
 	whenMount?(): any;
 	whenDemount?(): any;
