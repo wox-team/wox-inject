@@ -27,6 +27,11 @@ jobs:
           version: 8
           run_install: false
 
+      - name: get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
       - uses: actions/cache@v3
         name: Setup pnpm cache
         with:
@@ -42,7 +47,7 @@ jobs:
         run: pnpm config set store-dir $PNPM_CACHE_FOLDER
 
       - name: install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: run tests
         run: pnpm test:ci
