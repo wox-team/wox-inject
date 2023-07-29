@@ -1,4 +1,4 @@
-import { beforeEach, test } from 'vitest';
+import { beforeEach, expect, test } from 'vitest';
 import { InjectionContainer, DependencyScope, clearRegistry } from './inject';
 import { setupScopedResolution, setupSingletonResolution, setupTransientResolution } from '../tests/setup_dependencies';
 

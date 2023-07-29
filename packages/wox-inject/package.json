@@ -1,6 +1,6 @@
 {
 	"name": "@wox-team/wox-inject",
-	"version": "0.0.0-rc.2",
+	"version": "0.0.0-rc.3",
 	"description": "Dependency injection for React",
 	"author": "wox team",
 	"license": "MIT",
@@ -31,6 +31,9 @@
 		"dev": "tsup",
 		"lint": "TIMING=1 eslint \"src/**/*.ts*\"",
 		"clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+	},
+	"dependencies": {
+		"@wox-team/wox-app-vitals": "0.0.0-rc.0"
 	},
 	"peerDependencies": {
 		"react": "^18.0.0",

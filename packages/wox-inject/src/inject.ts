@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Graph } from './_graph';
-import { todo } from './_todo';
+import { todo } from '@wox-team/wox-app-vitals';
 
 const MAX_RECURSION_DEPTH_BEFORE_FLAGGING_CIRCULAR_NODES = 0xffff;
 

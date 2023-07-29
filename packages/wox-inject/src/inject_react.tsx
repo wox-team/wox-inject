@@ -1,10 +1,10 @@
 // Reason: For abstract inheritance usage for ControllerProtocol, this module can't imposed the method shape on the implementor.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { useConstant } from '@wox-team/wox-app-vitals';
 import { createContext, useContext, useLayoutEffect } from 'react';
 import { DependencyScope, InjectionContainer } from './inject';
 import type { Token } from './inject';
-import { useConstant } from './_use_constant';
 
 const ResolutionContext = createContext(new InjectionContainer(new DependencyScope()));
 
@@ -20,10 +20,6 @@ export function useDependency<T>(dependencyToken: Token<T>): T {
 	const value = useConstant(() => container.resolve(dependencyToken));
 
 	return value;
-}
-
-export function useExposedInjectorContainer(): InjectionContainer {
-	return useContext(ResolutionContext);
 }
 
 export interface ControllerProtocol {
