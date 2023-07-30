@@ -2,6 +2,9 @@
 import { Graph } from './_graph';
 import { todo } from '@wox-team/wox-app-vitals';
 
+const NOOP = () => {
+	/* noop */
+};
 const MAX_RECURSION_DEPTH_BEFORE_FLAGGING_CIRCULAR_NODES = 0xffff;
 
 export type Ctor<T> = {
@@ -53,9 +56,15 @@ interface ReflectedData {
 
 const REFLECTED_DATA_REGISTRY_CACHE: ReflectedData[] = [];
 
-function INTERNAL_getCachedReflection(reflector: Token): Token[] {
+function INTERNAL_getCachedReflection<T extends Token<any>>(reflector: T): Token[] {
 	const cachedReflection = REFLECTED_DATA_REGISTRY_CACHE.find((x) => x.key === reflector);
 	if (cachedReflection != null) return cachedReflection.value;
+
+	if (Injectable.lookup !== (NOOP as any)) {
+		const reflectedData = INTERNAL_setCachedReflection(reflector, Injectable.lookup<T>(reflector));
+
+		return reflectedData.value;
+	}
 
 	return [];
 }
@@ -101,8 +110,10 @@ export function Injectable(settings?: RegistrationSettings, __fake__reflection?:
 	};
 }
 
+export type LookupImpl = <T>(token: Token<T>) => T extends Ctor<any> ? ConcreteMappedSymbols<ConstructorParameters<T>> : Token[];
+
 Injectable.naughtyReflection = INTERNAL_setCachedReflection;
-Injectable.resolve = INTERNAL_setCachedReflection;
+Injectable.lookup = NOOP as unknown as LookupImpl;
 
 interface Resolved<T> {
 	token: Token<T>;
@@ -157,7 +168,7 @@ export class DependencyScope {
 
 	public scanRegistrationStrict<T>(dependencyToken: Token<T>): Registration<T> {
 		const registration = this.scanRegistration(dependencyToken);
-		if (registration == null) throw new Error('Could not retrieve registration.');
+		if (registration == null) throw new Error(`Could not retrieve registration. "${unwrapTokenForPrint(dependencyToken)}"`);
 
 		return registration;
 	}
@@ -176,7 +187,7 @@ export class DependencyScope {
 }
 
 export class InjectionContainer {
-	static instanceCounter = 0;
+	private static instanceCounter = 0;
 
 	public readonly id: number;
 	readonly #dependencyScope: DependencyScope;
@@ -353,4 +364,12 @@ interface NodeData {
 	id: Token<unknown>;
 	registration: Registration<unknown>;
 	parent: Registration<unknown> | null;
+}
+
+function unwrapTokenForPrint(token: Token): string {
+	if (token instanceof Symbol) {
+		return token.toString();
+	}
+
+	return token.toString();
 }

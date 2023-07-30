@@ -1,6 +1,7 @@
 import { beforeEach, expect, test } from 'vitest';
-import { InjectionContainer, DependencyScope, clearRegistry } from './inject';
+import { InjectionContainer, DependencyScope, clearRegistry, Injectable, LookupImpl } from './inject';
 import { setupScopedResolution, setupSingletonResolution, setupTransientResolution } from '../tests/setup_dependencies';
+import { createTestBed } from './testing';
 
 beforeEach(() => {
 	clearRegistry();
@@ -105,4 +106,33 @@ test('resolve, when graphing identical nodes, should not keep the same transient
 	const _4 = container.resolve(deps[4]);
 
 	expect(_4._2._1).not.toBe(_4._3._1);
+});
+
+test('Virtual Injectable.lookup method, when method is reassigned, internal reflector lookup should prioritize to use it', () => {
+	class IgnoreThis {
+		public readonly data = 'should be replaced';
+	}
+
+	@Injectable()
+	class ReplaceWithThis {
+		public readonly data = 'replaced with this';
+	}
+
+	@Injectable()
+	class Ctor {
+		constructor(public readonly shouldBeReplaced: IgnoreThis) {
+			// Empty
+		}
+	}
+
+	Injectable.lookup = ((token) => {
+		if (token !== Ctor) return [];
+
+		return [ReplaceWithThis];
+	}) as LookupImpl;
+
+	const container = createTestBed();
+	const instance = container.resolve(Ctor);
+
+	expect(instance.shouldBeReplaced.data).toBe('replaced with this');
 });
