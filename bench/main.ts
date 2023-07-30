@@ -5,15 +5,16 @@ import { fileURLToPath } from 'url';
 import { Console } from 'node:console';
 import { Transform } from 'node:stream';
 import { Options } from 'tinybench';
-import { createDepthBench } from './create_depth/depth';
+// Might sunset these tests...
+// import { createDepthBench } from './create_depth/depth';
 import { createUsageBench } from './create_usage/depth';
 
 const USE_OUTPUT = debug('use:output').enabled;
 
 // Configuring benchmark options based on the USE_OUTPUT flag.
-const opt: Options = USE_OUTPUT ? { warmupTime: 100, iterations: 25 } : { time: 100 };
+const opt: Options = USE_OUTPUT ? { warmupTime: 100, iterations: 1_000_000 } : { warmupTime: 100, iterations: 100_000 };
 
-const benchEntities = [createDepthBench(opt), createUsageBench(opt)];
+const benchEntities = [/* createDepthBench(opt), */ createUsageBench(opt)];
 
 for (const entity of benchEntities) {
 	await entity.bench.run();
