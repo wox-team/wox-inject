@@ -1,8 +1,9 @@
 name: Changesets
 on:
   push:
-    branches:
-      - canary
+    branches: [canary]
+  pull_request:
+    branches: [canary]
 env:
   CI: true
   PNPM_CACHE_FOLDER: .pnpm-store
@@ -49,16 +50,5 @@ jobs:
       - name: install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: run build
-        run: pnpm build
-
-      - name: create and publish versions
-        uses: changesets/action@v1
-        with:
-          version: pnpm ci:version
-          commit: "chore: update versions"
-          title: "chore: update versions"
-          publish: pnpm ci:release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: run tests
+        run: pnpm test:ci
