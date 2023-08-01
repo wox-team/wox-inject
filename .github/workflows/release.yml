@@ -1,11 +1,14 @@
-name: Changesets
+name: Run release pipeline
+
 on:
   push:
     branches:
       - canary
+
 env:
   CI: true
   PNPM_CACHE_FOLDER: .pnpm-store
+
 jobs:
   version:
     timeout-minutes: 15
