@@ -1,0 +1,48 @@
+{
+	"name": "@wox-team/wox-store",
+	"version": "0.0.0-rc.2",
+	"description": "Dependency injection for React",
+	"author": "wox team",
+	"license": "MIT",
+	"repository": "https://github.com/wox-team/wox-inject",
+	"keywords": [
+		"react di",
+		"react dependency injection",
+		"react",
+		"dependency injection",
+		"wox",
+		"wox team",
+		"wox-team",
+		"inject"
+	],
+	"sideEffects": false,
+	"main": "./dist/main.js",
+	"module": "./dist/main.mjs",
+	"types": "./dist/main.d.ts",
+	"files": [
+		"dist/**"
+	],
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"scripts": {
+		"build": "tsc --noEmit && tsup",
+		"dev": "tsup",
+		"lint": "TIMING=1 eslint \"src/**/*.ts*\"",
+		"clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+	},
+	"dependencies": {
+		"@wox-team/wox-app-vitals": "0.0.0-rc.0"
+	},
+	"peerDependencies": {
+		"react": "^18.0.0",
+		"react-dom": "^18.0.0",
+		"react-is": "^18.0.0"
+	},
+	"devDependencies": {
+		"react": "18.2.0",
+		"react-dom": "18.2.0",
+		"react-is": "18.2.0"
+	}
+}
