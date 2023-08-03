@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 importers:
 
   .:
@@ -136,6 +132,22 @@ importers:
         version: 0.31.3(@vitest/ui@0.31.3)(happy-dom@9.20.3)(jsdom@22.1.0)(terser@5.17.6)
 
   packages/wox-inject:
+    dependencies:
+      '@wox-team/wox-app-vitals':
+        specifier: 0.0.0-rc.0
+        version: 0.0.0-rc.0(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
+    devDependencies:
+      react:
+        specifier: 18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: 18.2.0
+        version: 18.2.0(react@18.2.0)
+      react-is:
+        specifier: 18.2.0
+        version: 18.2.0
+
+  packages/wox-store:
     dependencies:
       '@wox-team/wox-app-vitals':
         specifier: 0.0.0-rc.0
@@ -5908,3 +5920,7 @@ packages:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
     dev: true
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
