@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-types */
+
 import { EventEmitter, Disposer } from '@wox-team/wox-app-vitals';
 
-export class Signal<T> {
+export class ReactiveNode<T> {
 	private readonly dispatch = new EventEmitter<{
 		update: Readonly<T>;
 	}>();
@@ -42,8 +45,40 @@ export class Signal<T> {
 	}
 }
 
-export function signal<T>(initialValue: T) {
-	const signal = new Signal(initialValue);
+interface Signal<T> extends Composable<T> {
+	set(value: T): void;
+	update(updateFn: (value: T) => T): void;
+	mutate(mutatorFn: (value: T) => void): void;
+}
 
-	return signal;
+const SIGNAL = Symbol('SIGNAL');
+
+export type Composable<T> = (() => T) & {
+	[SIGNAL]: unknown;
+};
+
+export function createSignalFromFunction<T>(node: ReactiveNode<T>, fn: () => T): Composable<T>;
+export function createSignalFromFunction<T, U extends Record<string, unknown>>(
+	node: ReactiveNode<T>,
+	fn: () => T,
+	extraApi: U,
+): Composable<T> & U;
+export function createSignalFromFunction<T, U extends Record<string, unknown> = {}>(
+	node: ReactiveNode<T>,
+	fn: () => T,
+	extraApi: U = {} as U,
+): Composable<T> & U {
+	(fn as any)[SIGNAL] = node;
+
+	return Object.assign(fn, extraApi) as Composable<T> & U;
+}
+
+export function signal<T>(initialValue: T): Signal<T> {
+	const reactiveNode = new ReactiveNode(initialValue);
+
+	return createSignalFromFunction(reactiveNode, reactiveNode.get.bind(reactiveNode), {
+		set: reactiveNode.set.bind(reactiveNode),
+		update: reactiveNode.update.bind(reactiveNode),
+		mutate: reactiveNode.mutate.bind(reactiveNode),
+	});
 }

@@ -1,10 +1,10 @@
 import { test, expect } from 'vitest';
 import { signal } from './signal';
 
-test('writable signal, when get method is invoked, should return the value', () => {
+test('writable signal, when getter method is invoked, should return the value', () => {
 	const value = signal(1);
 
-	expect(value.get()).toBe(1);
+	expect(value()).toBe(1);
 });
 
 test('writable signal, when set method is invoked, should set the previous value to the new value', () => {
@@ -12,7 +12,7 @@ test('writable signal, when set method is invoked, should set the previous value
 
 	value.set(2);
 
-	expect(value.get()).toBe(2);
+	expect(value()).toBe(2);
 });
 
 test('writable signal, when method is invoked, should compute a new value from the previous value', () => {
@@ -20,7 +20,7 @@ test('writable signal, when method is invoked, should compute a new value from t
 
 	value.update((v) => v + 1);
 
-	expect(value.get()).toBe(2);
+	expect(value()).toBe(2);
 });
 
 test('writable signal, when mutate is invoked, should allow mutations to occur on the current state', () => {
@@ -30,7 +30,7 @@ test('writable signal, when mutate is invoked, should allow mutations to occur o
 		v.x = 2;
 	});
 
-	expect(value.get()).toEqual({ x: 2 });
+	expect(value()).toEqual({ x: 2 });
 });
 
 test('writable signal, when mutate is invoked, should dispatch update', () => {
@@ -40,5 +40,5 @@ test('writable signal, when mutate is invoked, should dispatch update', () => {
 		v.x = 2;
 	});
 
-	expect(value.get()).toEqual({ x: 2 });
+	expect(value()).toEqual({ x: 2 });
 });
