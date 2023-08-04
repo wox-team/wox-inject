@@ -45,7 +45,7 @@ export class ReactiveNode<T> {
 	}
 }
 
-interface Signal<T> extends Composable<T> {
+export interface Signal<T> extends Composable<T> {
 	set(value: T): void;
 	update(updateFn: (value: T) => T): void;
 	mutate(mutatorFn: (value: T) => void): void;

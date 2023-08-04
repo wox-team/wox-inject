@@ -1,1 +1,2 @@
-export * from './src/signal';
+export { Composable, ReactiveNode, signal } from './src/signal';
+export type { Signal } from './src/signal';
