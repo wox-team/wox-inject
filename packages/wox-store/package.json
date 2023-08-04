@@ -1,6 +1,6 @@
 {
 	"name": "@wox-team/wox-store",
-	"version": "0.0.0-rc.0",
+	"version": "0.0.0-rc.1",
 	"description": "Dependency injection for React",
 	"author": "wox team",
 	"license": "MIT",

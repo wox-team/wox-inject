@@ -49,6 +49,7 @@ interface Signal<T> extends Composable<T> {
 	set(value: T): void;
 	update(updateFn: (value: T) => T): void;
 	mutate(mutatorFn: (value: T) => void): void;
+	sub(subFn: (value: T) => void): Disposer;
 }
 
 const SIGNAL = Symbol('SIGNAL');
@@ -80,5 +81,6 @@ export function signal<T>(initialValue: T): Signal<T> {
 		set: reactiveNode.set.bind(reactiveNode),
 		update: reactiveNode.update.bind(reactiveNode),
 		mutate: reactiveNode.mutate.bind(reactiveNode),
+		sub: reactiveNode.sub.bind(reactiveNode),
 	});
 }

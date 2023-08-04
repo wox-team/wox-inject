@@ -33,12 +33,14 @@ test('writable signal, when mutate is invoked, should allow mutations to occur o
 	expect(value()).toEqual({ x: 2 });
 });
 
-test('writable signal, when mutate is invoked, should dispatch update', () => {
-	const value = signal({ x: 1 });
+test('writable signal, when value is change, should dispatch update', () => {
+	const value = signal(1);
 
-	value.mutate((v) => {
-		v.x = 2;
+	let emitted = 0;
+	value.sub((value) => {
+		emitted = value;
 	});
+	value.set(2);
 
-	expect(value()).toEqual({ x: 2 });
+	expect(emitted).toBe(2);
 });
