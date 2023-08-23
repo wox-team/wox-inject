@@ -2,6 +2,8 @@
 import { Graph } from './_graph';
 import { todo } from '@wox-team/wox-app-vitals';
 
+let currentInjectionContainer: InjectionContainer | null = null;
+
 const NOOP = () => {
 	/* noop */
 };
@@ -41,6 +43,16 @@ function INTERNAL_register<T>(token: Ctor<T>, settings: RegistrationSettings, __
 	if (__fake__reflection != null) {
 		INTERNAL_setCachedReflection(token, __fake__reflection);
 	}
+}
+
+export function getResolveScopeRef(): InjectionContainer {
+	if (currentInjectionContainer == null) throw new Error('Could not reach the current injector');
+
+	return currentInjectionContainer;
+}
+
+export function resolve<T>(token: Token<T>): T {
+	return getResolveScopeRef().resolve(token);
 }
 
 export function clearRegistry(): void {
@@ -203,6 +215,9 @@ export class InjectionContainer {
 	}
 
 	public resolve<T>(dependencyToken: Token<T>): T {
+		// eslint-disable-next-line @typescript-eslint/no-this-alias
+		currentInjectionContainer = this;
+
 		const [resolved, registration] = this.#dependencyScope.getPotentialResolvedDependency(dependencyToken);
 		if (resolved != null) return resolved;
 
@@ -309,6 +324,8 @@ export class InjectionContainer {
 
 			instance = newResolved.instance;
 		}
+
+		currentInjectionContainer = null;
 
 		return instance;
 	}

@@ -1,5 +1,5 @@
 import { beforeEach, expect, test } from 'vitest';
-import { InjectionContainer, DependencyScope, clearRegistry, Injectable, LookupImpl } from './inject';
+import { InjectionContainer, DependencyScope, clearRegistry, Injectable, LookupImpl, resolve } from './inject';
 import { setupScopedResolution, setupSingletonResolution, setupTransientResolution } from '../tests/setup_dependencies';
 import { createTestBed } from './testing';
 
@@ -135,4 +135,24 @@ test('Virtual Injectable.lookup method, when method is reassigned, internal refl
 	const instance = container.resolve(Ctor);
 
 	expect(instance.shouldBeReplaced.data).toBe('replaced with this');
+});
+
+// Need more work, it will go out of the resolve scope.
+test.skip('resolve function, when invoked during ctor creation, should finish resolving as if it was ctor injected', () => {
+	@Injectable()
+	class ChildDep {}
+	Injectable.naughtyReflection(ChildDep, []);
+
+	@Injectable()
+	class ParentDep {
+		child = resolve(ChildDep);
+	}
+	Injectable.naughtyReflection(ParentDep, []);
+
+	const scope = new DependencyScope();
+	const container = new InjectionContainer(scope);
+
+	const dep = container.resolve(ParentDep);
+
+	expect(dep.child).toBeInstanceOf(ChildDep);
 });
