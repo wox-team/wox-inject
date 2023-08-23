@@ -10,5 +10,6 @@ export {
 	clearRegistry,
 	resolve,
 } from './src/inject';
+export * from './src/injector';
 export * from './src/inject_react';
 export * from './src/testing';
