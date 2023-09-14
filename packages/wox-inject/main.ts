@@ -13,3 +13,4 @@ export {
 export * from './src/injector';
 export * from './src/inject_react';
 export * from './src/testing';
+export * from './src/with_new_resolution_provider';
