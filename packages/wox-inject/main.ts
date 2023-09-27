@@ -1,16 +1,16 @@
 export {
-	Ctor,
 	DependencyScope,
-	GenericClassDecorator,
 	Injectable,
 	InjectionContainer,
-	LookupImpl,
 	ServiceLifetimes,
-	Token,
 	clearRegistry,
 	resolve,
+	type GenericClassDecorator,
+	type Ctor,
+	type Token,
+	type LookupImpl,
 } from './src/inject';
-export * from './src/injector';
-export * from './src/inject_react';
-export * from './src/testing';
-export * from './src/with_new_resolution_provider';
+export { Injector } from './src/injector';
+export { ResolutionProvider, useController, useDependency, type ControllerProtocol } from './src/inject_react';
+export { createTestBed } from './src/testing';
+export { withNewResolutionProvider } from './src/with_new_resolution_provider';

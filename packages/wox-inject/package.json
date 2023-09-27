@@ -29,6 +29,7 @@
 	"scripts": {
 		"build": "tsc --noEmit && tsup",
 		"dev": "tsup",
+		"test": "pnpm vitest .test.ts .test.tsx --run",
 		"lint": "TIMING=1 eslint \"src/**/*.ts*\"",
 		"clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
 	},

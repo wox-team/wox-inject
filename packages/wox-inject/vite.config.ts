@@ -1,20 +1,23 @@
 /// <reference types="vitest" />
-import { defineProject } from 'vitest/config';
+import { defineConfig, mergeConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import { vitestConfig } from '../../vitest.config';
 
-export default defineProject({
-	plugins: [
-		react({
-			babel: {
-				parserOpts: {
-					plugins: ['decorators-legacy'],
+export default mergeConfig(
+	vitestConfig,
+	defineConfig({
+		plugins: [
+			react({
+				babel: {
+					parserOpts: {
+						plugins: ['decorators-legacy'],
+					},
 				},
-			},
-		}),
-	],
-	test: {
-		environment: 'happy-dom',
-		globals: true,
-		setupFiles: '../../tests/setup.ts',
-	},
-});
+			}),
+		],
+		test: {
+			globals: true,
+			environment: 'jsdom',
+		},
+	}),
+);
