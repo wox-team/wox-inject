@@ -1,5 +1,5 @@
 import { beforeEach, expect, test } from 'vitest';
-import { InjectionContainer, DependencyScope, clearRegistry, Injectable, LookupImpl, resolve } from './inject';
+import { InjectionContainer, DependencyScope, clearRegistry, Injectable, LookupImpl, resolve, ServiceLifetimes } from './inject';
 import { setupScopedResolution, setupSingletonResolution, setupTransientResolution } from '../tests/setup_dependencies';
 import { createTestBed } from './testing';
 
@@ -155,4 +155,229 @@ test.skip('resolve function, when invoked during ctor creation, should finish re
 	const dep = container.resolve(ParentDep);
 
 	expect(dep.child).toBeInstanceOf(ChildDep);
+});
+
+test('Singleton instance, when being resolved multiple times in different branches, should retain one instance', () => {
+	let resolvedTimes = 0;
+
+	@Injectable({
+		lifeTime: ServiceLifetimes.Singleton,
+	})
+	class _1 {
+		value = Symbol(1);
+
+		constructor() {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_1, []);
+
+	@Injectable({
+		lifeTime: ServiceLifetimes.Singleton,
+	})
+	class _2 {
+		value = Symbol(2);
+
+		constructor(public readonly _1: _1) {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_2, [_1]);
+
+	@Injectable({
+		lifeTime: ServiceLifetimes.Singleton,
+	})
+	class _3 {
+		value = Symbol(3);
+
+		constructor(public readonly _2: _2) {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_3, [_2]);
+
+	const scope = new DependencyScope();
+	const container_1 = new InjectionContainer(scope);
+
+	container_1.resolve(_1);
+	container_1.resolve(_2);
+	container_1.resolve(_3);
+
+	expect(resolvedTimes).toBe(3);
+});
+
+test('Scoped instance, when being resolved multiple times in different branches, should retain one instance', () => {
+	let resolvedTimes = 0;
+
+	@Injectable({
+		lifeTime: ServiceLifetimes.Scoped,
+	})
+	class _1 {
+		value = Symbol(1);
+
+		constructor() {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_1, []);
+
+	@Injectable({
+		lifeTime: ServiceLifetimes.Scoped,
+	})
+	class _2 {
+		value = Symbol(2);
+
+		constructor(public readonly _1: _1) {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_2, [_1]);
+
+	@Injectable({
+		lifeTime: ServiceLifetimes.Singleton,
+	})
+	class _3 {
+		value = Symbol(3);
+
+		constructor(public readonly _2: _2) {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_3, [_2]);
+
+	const scope = new DependencyScope();
+	const container_1 = new InjectionContainer(scope);
+
+	container_1.resolve(_1);
+	container_1.resolve(_2);
+	container_1.resolve(_3);
+
+	expect(resolvedTimes).toBe(3);
+});
+
+test('Scoped instance, when being resolved multiple times in different branches and scopes, should retain one instance', () => {
+	let resolvedTimes = 0;
+
+	@Injectable({
+		lifeTime: ServiceLifetimes.Scoped,
+	})
+	class _1 {
+		value = Symbol(1);
+
+		constructor() {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_1, []);
+
+	@Injectable({
+		lifeTime: ServiceLifetimes.Scoped,
+	})
+	class _2 {
+		value = Symbol(2);
+
+		constructor(public readonly _1: _1) {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_2, [_1]);
+
+	@Injectable({
+		lifeTime: ServiceLifetimes.Singleton,
+	})
+	class _3 {
+		value = Symbol(3);
+
+		constructor(public readonly _2: _2) {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_3, [_2]);
+
+	const scope = new DependencyScope();
+	const container_1 = new InjectionContainer(scope);
+
+	const container_2 = new InjectionContainer(scope);
+
+	container_1.resolve(_1);
+	container_1.resolve(_2);
+	container_2.resolve(_3);
+
+	expect(resolvedTimes).toBe(3);
+});
+
+test('Transient instance, when being resolved multiple times in different branches, should create new instances', () => {
+	let resolvedTimes = 0;
+
+	@Injectable({
+		lifeTime: ServiceLifetimes.Transient,
+	})
+	class _1 {
+		value = Symbol(1);
+
+		constructor() {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_1, []);
+
+	@Injectable({
+		lifeTime: ServiceLifetimes.Transient,
+	})
+	class _2 {
+		value = Symbol(2);
+
+		constructor(public readonly _1: _1) {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_2, [_1]);
+
+	@Injectable({
+		lifeTime: ServiceLifetimes.Transient,
+	})
+	class _3 {
+		value = Symbol(3);
+
+		constructor(public readonly _2: _2) {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_3, [_2]);
+
+	const scope = new DependencyScope();
+	const container_1 = new InjectionContainer(scope);
+
+	container_1.resolve(_1);
+	container_1.resolve(_2);
+	container_1.resolve(_3);
+
+	expect(resolvedTimes).toBe(6);
+});
+
+test('over-register, when developers register mock values for a token, it should retrieve the mock value', () => {
+	@Injectable()
+	class Child {
+		data = 'should be replaced';
+	}
+
+	@Injectable()
+	class Parent {
+		constructor(public readonly child: Child) {
+			// Empty
+		}
+	}
+	Injectable.naughtyReflection(Parent, [Child]);
+
+	const testBed = createTestBed();
+	testBed.mockRegister(
+		Child,
+		class {
+			data = 'replaced with this';
+		},
+	);
+
+	const instance = testBed.resolve(Parent);
+
+	expect(instance.child.data).toBe('replaced with this');
 });

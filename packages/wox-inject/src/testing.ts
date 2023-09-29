@@ -21,4 +21,12 @@ class TestBed {
 	public resolve<T>(dependencyToken: Token<T>) {
 		return this.injectionContainer.resolve(dependencyToken);
 	}
+
+	public mockRegister<T>(token: Token<any>, factory: T) {
+		this.dependencyScope.addHotRegistration(token, factory);
+	}
+
+	public clearMocks() {
+		this.dependencyScope.clearHotRegistration();
+	}
 }

@@ -21,6 +21,8 @@ export enum ServiceLifetimes {
 	Singleton,
 	Transient,
 	Scoped,
+	/* @Internal */
+	Unknown,
 }
 
 interface RegistrationSettings {
@@ -29,6 +31,7 @@ interface RegistrationSettings {
 
 interface Registration<T> {
 	readonly token: Token<T>;
+	readonly someValue: Token<T>;
 	readonly settings: RegistrationSettings;
 }
 
@@ -37,6 +40,7 @@ const registry: Registration<any>[] = [];
 function INTERNAL_register<T>(token: Ctor<T>, settings: RegistrationSettings, __fake__reflection?: any[]): void {
 	registry.push({
 		token,
+		someValue: token,
 		settings,
 	});
 
@@ -136,8 +140,9 @@ interface Resolved<T> {
  * The DependencyScope class has the responsibility is to hold onto all the resolved instances during runtime and providing easy to access
  */
 export class DependencyScope {
-	readonly singletons: Resolved<unknown>[];
-	readonly scoped: Resolved<unknown>[] = [];
+	public readonly singletons: Resolved<unknown>[];
+	public readonly scoped: Resolved<unknown>[] = [];
+	public hotRegistrationRegister: Registration<any>[] = [];
 
 	constructor(parentScope?: DependencyScope) {
 		this.singletons = parentScope?.singletons ?? [];
@@ -167,6 +172,17 @@ export class DependencyScope {
 			const item = registry[index - 1];
 			if (item.token === dependencyToken) {
 				registration = item;
+
+				if (this.hotRegistrationRegister.length > 0) {
+					for (const hotRegistration of this.hotRegistrationRegister) {
+						if (hotRegistration.token === dependencyToken) {
+							(registration.someValue as any) = hotRegistration.someValue;
+
+							break;
+						}
+					}
+				}
+
 				break;
 			}
 		}
@@ -196,6 +212,20 @@ export class DependencyScope {
 
 		return null;
 	}
+
+	public addHotRegistration<T>(dependencyToken: Token<T>, value: any): void {
+		this.hotRegistrationRegister.push({
+			token: dependencyToken,
+			someValue: value as any,
+			settings: {
+				lifeTime: ServiceLifetimes.Unknown,
+			},
+		});
+	}
+
+	public clearHotRegistration(): void {
+		this.hotRegistrationRegister = [];
+	}
 }
 
 export class InjectionContainer {
@@ -204,10 +234,10 @@ export class InjectionContainer {
 	public readonly id: number;
 	readonly #dependencyScope: DependencyScope;
 
-	constructor(dependencyScope: DependencyScope) {
+	constructor(dependencyScope: Readonly<DependencyScope>) {
 		this.id = InjectionContainer.instanceCounter++;
 
-		this.#dependencyScope = dependencyScope;
+		this.#dependencyScope = dependencyScope as DependencyScope;
 	}
 
 	public linkScope(): Readonly<DependencyScope> {
@@ -218,6 +248,7 @@ export class InjectionContainer {
 		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		currentInjectionContainer = this;
 
+		// If the token, for this depth, has already been resolved. Return it.
 		const [resolved, registration] = this.#dependencyScope.getPotentialResolvedDependency(dependencyToken);
 		if (resolved != null) return resolved;
 
@@ -228,7 +259,7 @@ export class InjectionContainer {
 
 		const transients: Resolved<unknown>[] = [];
 
-		// Step one - Branch Step
+		// -- Step one - Branch Step --
 
 		const nodeStack = [this.step_one_createNode(registration, null)];
 
@@ -257,7 +288,7 @@ export class InjectionContainer {
 			dependenciesForEachDependency.set(node.registration.token, registrations);
 		}
 
-		// Step two - Producer Step
+		// -- Step two - Producer Step --
 
 		depth = 0;
 		while (true) {
@@ -274,19 +305,23 @@ export class InjectionContainer {
 			for (const edge of edges) {
 				const registration = edge.data.registration;
 				const token = registration.token;
+				const factory = registration.someValue;
 
 				dependencyGraph.removeNode(edge.data.id);
 
 				if (typeof token === 'symbol') {
 					todo('Non ctor injection');
 				} else {
-					const args = this.step_two_retrieveArgs(token, dependenciesForEachDependency, transients);
-					const instance = new /* As Ctor */ token(...args);
+					let resolved = registration ? this.#dependencyScope.scanResolved(registration) : null;
+					if (resolved == null) {
+						const args = this.step_two_retrieveArgs(token, dependenciesForEachDependency, transients);
+						const instance = new /* As Ctor */ (factory as any)(...args);
 
-					const resolved = {
-						instance: instance,
-						token: token,
-					} satisfies Resolved<unknown>;
+						resolved = {
+							instance: instance,
+							token: token,
+						} satisfies Resolved<unknown>;
+					}
 
 					if (registration.settings.lifeTime === ServiceLifetimes.Singleton) {
 						this.#dependencyScope.singletons.push(resolved);
@@ -311,7 +346,7 @@ export class InjectionContainer {
 			}
 		}
 
-		// Step three - Retrieve step
+		// -- Step three - Retrieve step --
 
 		let instance: T;
 		if (registration.settings.lifeTime === ServiceLifetimes.Transient) {
