@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useConstant } from '@wox-team/wox-app-vitals';
-import { createContext, useContext, useLayoutEffect } from 'react';
+import { createContext, useContext, useLayoutEffect, useRef } from 'react';
 import { DependencyScope, InjectionContainer } from './inject';
 import type { Token } from './inject';
 
@@ -55,9 +55,10 @@ export function useDependency<T>(dependencyToken: Token<T>): T {
 	return value;
 }
 
-export interface ControllerProtocol {
-	whenMount?(): any;
-	whenDemount?(): any;
+export interface ControllerProtocol<T extends any[] = any[]> {
+	whenMount?(...args: T): any;
+	whenUpdate?(...args: T): any;
+	whenDemount?(...args: T): any;
 }
 
 type ControllerCtor<T> = {
@@ -73,32 +74,53 @@ type ControllerCtor<T> = {
  * @template T
  *
  * @example
- * // Use useController to resolve and use a controller in a functional component.
+ * // Use useController to resolve and use a controller in a React component.
  * function MyComponent() {
  *   const controller = useController(MyControllerToken);
  *   // Now you can use the controller instance within your component.
  * }
  */
-export function useController<T extends ControllerProtocol>(dependencyToken: ControllerCtor<T>): T {
+export function useController<T extends ControllerProtocol>(
+	dependencyToken: ControllerCtor<T>,
+	...params: T['whenMount'] extends (...args: any) => any
+		? Parameters<T['whenMount']>
+		: T['whenUpdate'] extends (...args: any) => any
+		? Parameters<T['whenUpdate']>
+		: T['whenDemount'] extends (...args: any) => any
+		? Parameters<T['whenDemount']>
+		: never[]
+): T {
 	const instance = useDependency(dependencyToken);
+	const hasCalledMount = useRef(false);
+	const latestParams = useRef(params);
 
 	useLayoutEffect(
 		function ReactLifeCycleTapIn() {
-			boxFn(instance.whenMount?.bind(instance));
+			if (hasCalledMount.current) {
+				latestParams.current = params;
+				boxFn(instance.whenUpdate?.bind(instance), latestParams.current);
 
-			return () => {
-				boxFn(instance.whenDemount?.bind(instance));
-			};
+				return;
+			}
+
+			hasCalledMount.current = true;
+			boxFn(instance.whenMount?.bind(instance), params);
 		},
-		[instance],
+		[instance, params],
 	);
+
+	useLayoutEffect(() => {
+		return () => {
+			boxFn(instance.whenDemount?.bind(instance), latestParams.current);
+		};
+	}, [instance]);
 
 	return instance;
 }
 
-function boxFn(fn: ((...args: any[]) => any) | undefined) {
+function boxFn(fn: ((...args: any[]) => any) | undefined, params: any[]) {
 	try {
-		const response = fn?.();
+		const response = fn?.(...params);
 		if (response instanceof Promise) {
 			response.catch((error) => {
 				printBoxedError(error);

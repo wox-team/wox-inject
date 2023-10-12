@@ -1,7 +1,7 @@
-import { beforeEach, expect, test } from 'vitest';
+import { beforeEach, expect, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ResolutionProvider, useDependency } from './inject_react';
+import { ControllerProtocol, ResolutionProvider, useController, useDependency } from './inject_react';
 import { Injectable, clearRegistry } from './inject';
 import { setupScopedResolution, setupSingletonResolution } from '../tests/setup_dependencies';
 import { useState } from 'react';
@@ -115,4 +115,36 @@ test('experience for new library user, when copying example from the readme, sho
 	await userEvent.click(screen.getByText('click me'));
 
 	expect(screen.getByText('hello there!')).toBeInTheDocument();
+});
+
+test('useController, when used in a React component, should return expected class instance', () => {
+	const whenMount = vi.fn<[_1: string]>();
+	const whenUpdate = vi.fn<[_1: string]>();
+	const whenDemount = vi.fn<[_1: string]>();
+
+	@Injectable()
+	class C implements ControllerProtocol {
+		whenMount = whenMount;
+		whenUpdate = whenUpdate;
+		whenDemount = whenDemount;
+	}
+
+	function Comp({ at }: { at?: string }) {
+		useController(C, at ?? 'A');
+
+		return null;
+	}
+
+	const result = render(<Comp />);
+	result.rerender(<Comp at='B' />);
+	result.rerender(<Comp at='C' />);
+	result.unmount();
+
+	expect(whenMount).toHaveBeenCalledOnce();
+	expect(whenMount).toHaveBeenCalledWith('A');
+	expect(whenUpdate).toHaveBeenCalledTimes(2);
+	expect(whenUpdate).toHaveBeenNthCalledWith(1, 'B');
+	expect(whenUpdate).toHaveBeenNthCalledWith(2, 'C');
+	expect(whenDemount).toHaveBeenCalledOnce();
+	expect(whenDemount).toHaveBeenCalledWith('C');
 });
