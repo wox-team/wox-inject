@@ -1,0 +1,39 @@
+{
+	"name": "@wox-team/wox-inject-vite",
+	"version": "0.0.0",
+	"description": "",
+	"author": "wox team",
+	"license": "MIT",
+	"repository": "https://github.com/wox-team/wox-inject-vite",
+	"keywords": [
+		"react di",
+		"react dependency injection",
+		"react",
+		"dependency injection",
+		"wox",
+		"wox team",
+		"wox-team",
+		"inject"
+	],
+	"sideEffects": false,
+	"main": "./dist/main.js",
+	"module": "./dist/main.mjs",
+	"types": "./dist/main.d.ts",
+	"files": [
+		"dist/**"
+	],
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"scripts": {
+		"build": "tsc --noEmit && tsup",
+		"dev": "tsup",
+		"test": "pnpm vitest .test.ts .test.tsx --run",
+		"lint": "TIMING=1 eslint \"src/**/*.ts*\"",
+		"clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+	},
+	"peerDependencies": {
+		"vite": "^4.5.0"
+	}
+}

@@ -1,0 +1,32 @@
+{
+	"name": "@wox-team/app-fixture",
+	"description": "Dependency injection for React",
+	"author": "wox team",
+	"license": "MIT",
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"scripts": {
+		"dev": "vite",
+		"lint": "TIMING=1 eslint \"src/**/*.ts*\"",
+		"clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+	},
+	"dependencies": {
+		"react": "^18.0.0",
+		"react-dom": "^18.0.0",
+		"react-is": "^18.0.0",
+		"@wox-team/wox-inject": "workspace:*",
+		"@wox-team/wox-inject-vite": "workspace:*"
+	},
+	"peerDependencies": {
+		"react": "^18.0.0",
+		"react-dom": "^18.0.0",
+		"react-is": "^18.0.0"
+	},
+	"devDependencies": {
+		"react": "18.2.0",
+		"react-dom": "18.2.0",
+		"react-is": "18.2.0"
+	}
+}
