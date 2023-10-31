@@ -1,4 +1,4 @@
-import type { Plugin } from 'vite';
+import type { Plugin, PluginOption } from 'vite';
 
 enum StateMode {
 	NONE,
@@ -305,11 +305,12 @@ function transform(input: string): string {
 	}
 }
 
-export function dependencyInjection(): Plugin {
+export function dependencyInjection(): PluginOption {
 	return {
 		name: 'vite:dependency-injection',
 		enforce: 'pre',
 		transform(src, fileName) {
+			console.log('hehe');
 			// Skip if file extension is not matching.
 			if (!/\.(mjs|[tj]sx?)$/.test(fileName)) return;
 
