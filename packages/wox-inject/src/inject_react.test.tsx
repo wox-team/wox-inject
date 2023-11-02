@@ -2,9 +2,10 @@ import { beforeEach, expect, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ControllerProtocol, ResolutionProvider, useController, useDependency } from './inject_react';
-import { Injectable, clearRegistry } from './inject';
+import { Injectable, clearRegistry, ServiceLifetimes } from './inject';
 import { setupScopedResolution, setupSingletonResolution } from '../tests/setup_dependencies';
 import { useState } from 'react';
+import { createTestBed } from './testing';
 
 beforeEach(() => {
 	clearRegistry();
@@ -147,4 +148,27 @@ test('useController, when used in a React component, should return expected clas
 	expect(whenUpdate).toHaveBeenNthCalledWith(2, 'C');
 	expect(whenDemount).toHaveBeenCalledOnce();
 	expect(whenDemount).toHaveBeenCalledWith('C');
+});
+
+test('ResolutionProvider, when passed a parent InjectContainer, should be able to derive instances from it', () => {
+	const testBed = createTestBed();
+
+	class A {
+		value = 'abc';
+	}
+	testBed.mockRegister(A, A, ServiceLifetimes.Transient);
+
+	function Comp(): JSX.Element {
+		const dep = useDependency(A);
+
+		return <span>{dep.value}</span>;
+	}
+
+	render(
+		<ResolutionProvider parentContainer={testBed.injectionContainer}>
+			<Comp />
+		</ResolutionProvider>,
+	);
+
+	expect(screen.getByText('abc')).toBeInTheDocument();
 });

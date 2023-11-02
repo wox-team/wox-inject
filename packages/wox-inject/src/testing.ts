@@ -1,4 +1,4 @@
-import { type Token } from './inject';
+import { ServiceLifetimes, type Token } from './inject';
 import { DependencyScope, InjectionContainer } from './inject';
 
 /**
@@ -22,8 +22,8 @@ class TestBed {
 		return this.injectionContainer.resolve(dependencyToken);
 	}
 
-	public mockRegister<T>(token: Token<any>, factory: T) {
-		this.dependencyScope.addHotRegistration(token, factory);
+	public mockRegister<T>(token: Token<any>, factory: T, lifeTime?: ServiceLifetimes): void {
+		this.dependencyScope.addHotRegistration(token, factory, lifeTime);
 	}
 
 	public clearMocks() {

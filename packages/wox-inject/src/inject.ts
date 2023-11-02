@@ -37,10 +37,15 @@ interface Registration<T> {
 
 const registry: Registration<any>[] = [];
 
-function INTERNAL_register<T>(token: Ctor<T>, settings: RegistrationSettings, __fake__reflection?: any[]): void {
+function INTERNAL_register<T>(
+	token: Token<any>,
+	someValue: Ctor<T>,
+	settings: RegistrationSettings,
+	__fake__reflection?: any[],
+): void {
 	registry.push({
 		token,
-		someValue: token,
+		someValue,
 		settings,
 	});
 
@@ -118,6 +123,7 @@ export function Injectable(settings?: RegistrationSettings, __fake__reflection?:
 	return function decorate<T>(ctor: Ctor<T>) {
 		INTERNAL_register(
 			ctor,
+			ctor,
 			settings ?? {
 				lifeTime: ServiceLifetimes.Scoped,
 			},
@@ -128,8 +134,15 @@ export function Injectable(settings?: RegistrationSettings, __fake__reflection?:
 
 export type LookupImpl = <T>(token: Token<T>) => T extends Ctor<any> ? ConcreteMappedSymbols<ConstructorParameters<T>> : Token[];
 
+export function register<T>(token: Token<any>, someValue: Ctor<T>, lifeTime?: ServiceLifetimes): void {
+	INTERNAL_register(token, someValue, {
+		lifeTime: lifeTime ?? ServiceLifetimes.Scoped,
+	});
+}
+
 Injectable.naughtyReflection = INTERNAL_setCachedReflection;
 Injectable.lookup = NOOP as unknown as LookupImpl;
+Injectable.register = register;
 
 interface Resolved<T> {
 	token: Token<T>;
@@ -142,10 +155,11 @@ interface Resolved<T> {
 export class DependencyScope {
 	public readonly singletons: Resolved<unknown>[];
 	public readonly scoped: Resolved<unknown>[] = [];
-	public hotRegistrationRegister: Registration<any>[] = [];
+	public hotRegistrationRegister: Registration<any>[];
 
 	constructor(parentScope?: DependencyScope) {
 		this.singletons = parentScope?.singletons ?? [];
+		this.hotRegistrationRegister = parentScope?.hotRegistrationRegister ?? [];
 	}
 
 	/**
@@ -173,17 +187,21 @@ export class DependencyScope {
 			if (item.token === dependencyToken) {
 				registration = item;
 
-				if (this.hotRegistrationRegister.length > 0) {
-					for (const hotRegistration of this.hotRegistrationRegister) {
-						if (hotRegistration.token === dependencyToken) {
-							(registration.someValue as any) = hotRegistration.someValue;
-
-							break;
-						}
-					}
-				}
-
 				break;
+			}
+		}
+
+		if (this.hotRegistrationRegister.length > 0) {
+			for (const hotRegistration of this.hotRegistrationRegister) {
+				if (hotRegistration.token === dependencyToken) {
+					if (registration) {
+						(registration.someValue as any) = hotRegistration.someValue;
+					} else {
+						registration = hotRegistration;
+					}
+
+					break;
+				}
 			}
 		}
 
@@ -213,12 +231,12 @@ export class DependencyScope {
 		return null;
 	}
 
-	public addHotRegistration<T>(dependencyToken: Token<T>, value: any): void {
+	public addHotRegistration<T>(dependencyToken: Token<T>, value: any, lifetime?: ServiceLifetimes): void {
 		this.hotRegistrationRegister.push({
 			token: dependencyToken,
 			someValue: value as any,
 			settings: {
-				lifeTime: ServiceLifetimes.Unknown,
+				lifeTime: lifetime ?? ServiceLifetimes.Unknown,
 			},
 		});
 	}

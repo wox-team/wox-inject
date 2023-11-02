@@ -8,12 +8,16 @@ import type { Token } from './inject';
 
 const ResolutionContext = createContext(new InjectionContainer(new DependencyScope()));
 
+interface ResolutionProviderProps extends React.PropsWithChildren {
+	parentContainer?: InjectionContainer;
+}
+
 /**
  * A React component that provides an optional dependency resolution scope to its child components.
  * When used, it creates a new dependency injection container and sets it as the context value,
  * allowing for isolated dependency management within its subtree.
  *
- * @param {React.PropsWithChildren} props - The properties and children to be rendered.
+ * @param {ResolutionProviderProps} props - The properties and children to be rendered.
  * @returns {JSX.Element} A JSX element that wraps its children with an optional dependency resolution context.
  *
  * @example
@@ -24,11 +28,13 @@ const ResolutionContext = createContext(new InjectionContainer(new DependencySco
  *
  * // Alternatively, the app can still function without using ResolutionProvider.
  * // In this case, dependency resolution will use the parent container's scope.
- * <App />
+ * <ComponentWithDependencies />
  */
-export function ResolutionProvider(props: React.PropsWithChildren) {
+export function ResolutionProvider(props: ResolutionProviderProps) {
 	const parentContainer = useContext(ResolutionContext);
-	const container = useConstant(() => new InjectionContainer(new DependencyScope(parentContainer.linkScope())));
+	const container = useConstant(
+		() => new InjectionContainer(new DependencyScope(props.parentContainer?.linkScope() ?? parentContainer.linkScope())),
+	);
 
 	return <ResolutionContext.Provider value={container}>{props.children}</ResolutionContext.Provider>;
 }
