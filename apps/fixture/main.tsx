@@ -7,6 +7,7 @@ class FooService {
 		console.log(`hello ${msg}!`);
 	}
 }
+Injectable.naughtyReflection(FooService, []);
 
 function App() {
 	const fooService = useDependency(FooService);

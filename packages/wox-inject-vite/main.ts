@@ -1,1 +1,1 @@
-export * from './vite_plugin';
+export { dependencyInjection } from './vite_plugin';
