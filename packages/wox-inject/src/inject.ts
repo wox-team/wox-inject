@@ -402,6 +402,7 @@ export class InjectionContainer {
 		transients: Resolved<unknown>[],
 	): unknown[] {
 		const lookupDependencies = depRef.get(token) ?? [];
+		console.log('transients', transients);
 
 		const args: unknown[] = [];
 

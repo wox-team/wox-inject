@@ -1,6 +1,6 @@
 {
 	"name": "@wox-team/wox-inject-vite",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"description": "",
 	"author": "wox team",
 	"license": "MIT",
@@ -20,7 +20,7 @@
 	"module": "./dist/main.mjs",
 	"types": "./dist/main.d.ts",
 	"files": [
-		"dist/**"
+		"./dist/**"
 	],
 	"publishConfig": {
 		"access": "public",
