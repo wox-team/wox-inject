@@ -119,9 +119,9 @@ test('experience for new library user, when copying example from the readme, sho
 });
 
 test('useController, when used in a React component, should return expected class instance', () => {
-	const whenMount = vi.fn<[_1: string]>();
-	const whenUpdate = vi.fn<[_1: string]>();
-	const whenDemount = vi.fn<[_1: string]>();
+	const whenMount = vi.fn<[_arg_one: string]>();
+	const whenUpdate = vi.fn<[_arg_one: string]>();
+	const whenDemount = vi.fn<[_arg_one: string]>();
 
 	@Injectable()
 	class C implements ControllerProtocol {
@@ -130,15 +130,15 @@ test('useController, when used in a React component, should return expected clas
 		whenDemount = whenDemount;
 	}
 
-	function Comp({ at }: { at?: string }) {
-		useController(C, at ?? 'A');
+	function Comp({ arg_one }: { arg_one?: string }) {
+		useController(C, arg_one ?? 'A');
 
 		return null;
 	}
 
 	const result = render(<Comp />);
-	result.rerender(<Comp at='B' />);
-	result.rerender(<Comp at='C' />);
+	result.rerender(<Comp arg_one='B' />);
+	result.rerender(<Comp arg_one='C' />);
 	result.unmount();
 
 	expect(whenMount).toHaveBeenCalledOnce();
