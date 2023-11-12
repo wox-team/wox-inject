@@ -20,7 +20,7 @@
 	"module": "./dist/main.mjs",
 	"types": "./dist/main.d.ts",
 	"files": [
-		"dist/**"
+		"./dist/**"
 	],
 	"publishConfig": {
 		"access": "public",
@@ -29,7 +29,8 @@
 	"scripts": {
 		"build": "tsc --noEmit && tsup",
 		"dev": "tsup",
-		"test": "pnpm vitest .test.ts .test.tsx --run",
+		"test": "pnpm vitest",
+		"test:ci": "pnpm vitest --run",
 		"lint": "TIMING=1 eslint \"src/**/*.ts*\"",
 		"clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
 	},

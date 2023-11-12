@@ -402,14 +402,15 @@ export class InjectionContainer {
 		transients: Resolved<unknown>[],
 	): unknown[] {
 		const lookupDependencies = depRef.get(token) ?? [];
+
 		const args: unknown[] = [];
 
 		for (const dep of lookupDependencies) {
 			let instance: unknown;
 			if (dep.settings.lifeTime === ServiceLifetimes.Transient) {
-				const i = transients.findIndex((x) => x.instance instanceof (dep.token as any));
+				const i = transients.findIndex((x) => x.token === dep.token);
 				if (i === -1) {
-					todo('How to handle this case?');
+					throw new Error('Could not find a transient instance');
 				}
 
 				instance = transients[i].instance;

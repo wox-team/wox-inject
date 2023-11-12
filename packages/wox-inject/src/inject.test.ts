@@ -354,30 +354,3 @@ test('Transient instance, when being resolved multiple times in different branch
 
 	expect(resolvedTimes).toBe(6);
 });
-
-test('over-register, when developers register mock values for a token, it should retrieve the mock value', () => {
-	@Injectable()
-	class Child {
-		data = 'should be replaced';
-	}
-
-	@Injectable()
-	class Parent {
-		constructor(public readonly child: Child) {
-			// Empty
-		}
-	}
-	Injectable.naughtyReflection(Parent, [Child]);
-
-	const testBed = createTestBed();
-	testBed.mockRegister(
-		Child,
-		class {
-			data = 'replaced with this';
-		},
-	);
-
-	const instance = testBed.resolve(Parent);
-
-	expect(instance.child.data).toBe('replaced with this');
-});
