@@ -3,6 +3,7 @@
 	"description": "Dependency injection for React",
 	"author": "wox team",
 	"license": "MIT",
+	"private": true,
 	"publishConfig": {
 		"access": "public",
 		"registry": "https://registry.npmjs.org/"
