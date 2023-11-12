@@ -1,54 +1,55 @@
 import { test } from 'vitest';
 import { transform } from './vite_plugin';
 
-test('', () => {
-	expect(
-		transform(
-			`
-			import { Injectable, useDependency } from '@wox-team/wox-inject';
-
-			@Injectable()
-			class FooService {
-
-			}
-		`,
-		),
-	).toMatchInlineSnapshot(
+test('transform, when used on an class with empty constructor, should concat a 0 list naughtyReflection', () => {
+	const modified = transform(
 		`
-			import { Injectable, useDependency } from '@wox-team/wox-inject';
+		import { Injectable } from '@wox-team/wox-inject';
 
-			@Injectable()
-			class FooService {
-
-			}
-			Injectable.naughtyReflection(FooService, []);
+		@Injectable()
+		class Foo {}
 		`,
 	);
+
+	expect(modified).toMatchInlineSnapshot(`
+		"
+				import { Injectable } from '@wox-team/wox-inject';
+
+				@Injectable()
+				class Foo {}
+				Injectable.naughtyReflection(Foo, []);
+		"
+	`);
 });
 
-// test('', () => {
-// 	expect(
-// 		transform(
-// 			`
-// 			import { Injectable, useDependency } from '@wox-team/wox-inject';
+test('transform, when used on an class with constructor params, should concat a list of those', () => {
+	const modified = transform(
+		`
+		import { Injectable } from '@wox-team/wox-inject';
 
-// 			@Injectable()
-// 			class FooService {}
-// 		`,
-// 		),
-// 	).toMatchInlineSnapshot(
-// 		`
-// 			import { Injectable, useDependency } from '@wox-team/wox-inject';
+		@Injectable()
+		class Bar {}
 
-// 			@Injectable()
-// 			class FooService {}
-// 			Injectable.naughtyReflection(FooService, []);
+		@Injectable()
+		class Test {
+			constructor(bar: Bar) {}
+		}
+		`,
+	);
 
-// 			@Injectable()
-// 			class BarService {
-// 				constructor(private readonly fooService: FooService) {}
-// 			}
-// 			Injectable.naughtyReflection(BarService, [FooService]);
-// 		`,
-// 	);
-// });
+	expect(modified).toMatchInlineSnapshot(`
+		"
+				import { Injectable } from '@wox-team/wox-inject';
+
+				@Injectable()
+				class Bar {}
+
+				@Injectable()
+				class Test {
+					constructor(bar: Bar) {}
+				}
+				Injectable.naughtyReflection(Bar, []);
+		Injectable.naughtyReflection(Test, [Bar]);
+		"
+	`);
+});

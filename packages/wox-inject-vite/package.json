@@ -29,11 +29,14 @@
 	"scripts": {
 		"build": "tsc --noEmit && tsup",
 		"dev": "tsup",
-		"test": "pnpm vitest .test.ts .test.tsx --run",
+		"test": "pnpm vitest --run",
 		"lint": "TIMING=1 eslint \"src/**/*.ts*\"",
 		"clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
 	},
 	"peerDependencies": {
 		"vite": "^4.5.0"
+	},
+	"dependencies": {
+		"oxc-parser": "^0.2.0"
 	}
 }

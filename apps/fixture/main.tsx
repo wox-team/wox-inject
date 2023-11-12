@@ -2,12 +2,22 @@ import { Injectable, useDependency } from '@wox-team/wox-inject';
 import { createRoot } from 'react-dom/client';
 
 @Injectable()
-class FooService {
+class BarService {
 	greet(msg: string) {
 		console.log(`hello ${msg}!`);
 	}
 }
-Injectable.naughtyReflection(FooService, []);
+
+@Injectable()
+class FooService {
+	constructor(private readonly barService: BarService) {
+		// Empty
+	}
+
+	greet(msg: string) {
+		this.barService.greet(msg);
+	}
+}
 
 function App() {
 	const fooService = useDependency(FooService);
