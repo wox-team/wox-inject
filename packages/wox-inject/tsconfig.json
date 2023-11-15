@@ -4,7 +4,7 @@
 		"jsx": "react-jsx",
 		"target": "ESNext",
 		"module": "ESNext",
-		"types": ["@testing-library/jest-dom"],
+		"types": [],
 		"moduleResolution": "Node",
 		"lib": ["DOM", "DOM.Iterable", "ESNext"],
 		"typeRoots": [
