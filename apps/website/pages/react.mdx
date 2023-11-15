@@ -1,0 +1,71 @@
+import { Callout } from 'nextra/components'
+import { Steps } from 'nextra/components'
+import Image from 'next/image'
+
+# React
+
+<Callout emoji={null}>
+  __Note__
+
+	Right now Vite is the only bundler that has a plugin that supports automatic of dependencies being injected.
+
+	More can be read about it [here.](/vite)
+</Callout>
+
+To use the dependency injection system in React you need to install the `@wox-team/wox-inject` package.
+
+```bash copy
+pnpm add @wox-team/wox-inject
+```
+
+Once installed you can use the `useDependacy` hook to inject a dependency into your component:
+
+```tsx
+import { Injectable } from '@wox-team/wox-inject';
+
+@Injectable()
+class MyService {
+	greet() {
+		return 'Hello World!';
+	}
+}
+
+function App() {
+	const myService = useDependacy(MyService);
+
+	return <div>{myService.greet()}</div>;
+}
+```
+
+At this level of complexity it's not really worth it to use dependency injection, but as your application grows it will become more and more useful.
+
+
+## A way of visualizing
+
+To help visualize how dependency injection works, you can image a simple application that want to share applicatin state between components.
+
+<picture>
+	<source srcSet='/containers-1-dark.png' media="(prefers-color-scheme: dark)" />
+	<Image
+		src='/containers-1.png'
+		alt=''
+		width={1024}
+		height={500}
+	/>
+</picture>
+
+With no additional scoping, all resolved injections will be accessible from the "global container".
+
+#### Scoped dependencies
+This changes when scoping is introduced. When a dependency is scoped, it will only be accessible from the scope it was defined in.
+
+<picture>
+	<source srcSet='/containers-2-dark.png' media="(prefers-color-scheme: dark)" />
+	<Image
+		src='/containers-2.png'
+		alt=''
+		width={1024}
+		height={500}
+	/>
+</picture>
+

@@ -1,0 +1,25 @@
+{
+	"name": "@wox-team/docs",
+	"author": "wox team",
+	"license": "MIT",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/wox-team/wox-inject.git"
+	},
+	"bugs": {
+		"url": "https://github.com/wox-team/wox-inject/issues"
+	},
+	"dependencies": {
+		"next": "^13.0.6",
+		"nextra": "latest",
+		"nextra-theme-docs": "latest",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
+	}
+}

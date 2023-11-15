@@ -7,6 +7,9 @@
 		"types": ["@testing-library/jest-dom"],
 		"moduleResolution": "Node",
 		"lib": ["DOM", "DOM.Iterable", "ESNext"],
+		"typeRoots": [
+			"node_modules/@types"
+		],
 		"strict":                           true,
 		"noEmit":                           true,
 		"allowJs":                          false,

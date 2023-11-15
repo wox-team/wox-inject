@@ -1,0 +1,77 @@
+import { Callout } from 'nextra/components'
+
+# Vite
+
+### Issue with vite
+
+Vite bundles with esbuild, which doesn't support emitting metadata for decorators.
+This means that decorators like `@Injectable()` won't work as expected.
+
+So without any additional work, the metadata won't be extracted from the source code.
+Making any resolve call for deep injected dependacies be `undefined`.
+
+It makes example like this not work as expected:
+
+```tsx
+import { Injectable, useDependacy } from '@wox-team/wox-inject';
+
+@Injectable()
+class B {
+	data = 'my data';
+}
+
+@Injectable()
+class A {
+	constructor(private b: B) {}
+}
+
+function App() {
+	const a = useDependacy(A);
+
+	//             b will be undefined here.
+	return <div>{a.b.data}</div>
+}
+```
+
+It's missing the metadata that's required to resolve the dependacy. That being:
+```tsx
+Injectable.naughtyReflection(B, []);
+Injectable.naughtyReflection(A, [B]);
+```
+
+### Adding the plugin
+The above lines are possible to add manually, but that becomes a bit tedious after a while.
+So we've created a vite plugin that does this for you.
+
+```bash copy
+pnpm add @wox-team/wox-inject-vite
+```
+
+Once installed, add it to your vite config:
+
+```tsx filename="vite.config.ts" {2,7}
+import { defineConfig } from 'vitest/config';
+import { dependencyInjection } from '@wox-team/wox-inject-vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+	plugins: [
+		dependencyInjection(),
+		react({
+			babel: {
+				parserOpts: {
+					plugins: ['decorators-legacy'],
+				},
+			},
+		}),
+	],
+});
+```
+
+<Callout type="info" emoji="ℹ️">
+	You might have also noticed that we've added `decorators-legacy` to the babel parser options.
+	This is because vite uses babel to parse the source code, and it doesn't support decorators by default.
+	So we'll need to add it to React's babel config.
+</Callout>
+
+

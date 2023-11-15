@@ -1,0 +1,37 @@
+# Reactivity
+
+Reactive bindings are currently not part of the library. wox inject behaves more similar to the React context API than to any other state manager. It only allows you to drive your application logic sepperated from your view logic and intertwin them in a very controlled way.
+
+If you want to include reactivity in your application we recommend using [Preact signals](https://preactjs.com/guide/v10/signals/). It's surprisingly very well adapted to wox inject.
+> Signals are reactive primitives for managing application state.
+
+```tsx
+import { Injectable } from '@wox-team/wox-inject';
+import { signal } from '@preact/signals-react';
+
+@Injectable()
+class Controller implements ControllerProtocol {
+	counterState = signal(0);
+	double = computed(() => this.counterState.value * 2);
+
+	incriment() {
+		this.counter.value++;
+	}
+}
+
+function Counter() {
+  const controller = useController(Controller);
+
+  return (
+    <div>
+      <p>Count: {double.counterState}</p>
+      <p>Double: {double.viewModel}</p>
+      <button onClick={() => controller.incriment()}>click me</button>
+    </div>
+  );
+}
+```
+
+Like with most of these examples, the smaller the use case is the less you will benefit from using wox. But if you have a large application with a lot of state and a lot of components that need to access that state, wox will help you to keep your code clean and maintainable.
+
+For instance, if you want to derive state from a service in a child component to `Counter`, the same access pattern applies. You can simply inject the service and use it in your component.
