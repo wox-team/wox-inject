@@ -2,7 +2,7 @@
 	"$schema": "https://turborepo.org/schema.json",
 	"pipeline": {
 		"build": {
-			"outputs": ["./dist/**", ".next/**", ".vercel/**"],
+			"outputs": ["./dist/**", ".next/**", "!.next/cache/**", ".vercel/**"],
 			"dependsOn": ["^build"]
 		},
 		"test": {
