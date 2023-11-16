@@ -53,3 +53,35 @@ test('transform, when used on an class with constructor params, should concat a 
 		"
 	`);
 });
+
+test('transform, when used on an symbol exports, should inject', () => {
+	const modified = transform(
+		`
+		import { Injectable } from '@wox-team/wox-inject';
+
+		@Injectable()
+		export class Bar {}
+
+		@Injectable()
+		export default class Test {
+			constructor(bar: Bar) {}
+		}
+		`,
+	);
+
+	expect(modified).toMatchInlineSnapshot(`
+		"
+				import { Injectable } from '@wox-team/wox-inject';
+
+				@Injectable()
+				export class Bar {}
+
+				@Injectable()
+				export class Test {
+					constructor(bar: Bar) {}
+				}
+				Injectable.naughtyReflection(Bar, []);
+		Injectable.naughtyReflection(Test, [Bar]);
+		"
+	`);
+});

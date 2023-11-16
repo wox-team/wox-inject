@@ -19,17 +19,28 @@ function findClassDeclarations(nodes: any[]): any[] {
 	const result: any[] = [];
 
 	for (const node of nodes) {
-		if (node.type === 'ClassDeclaration') {
-			if (node.decorators == null) {
+		let clsNode: any = node;
+
+		if (node.type === 'ExportNamedDeclaration') {
+			clsNode = node.declaration;
+		}
+
+		if (node.type === 'ExportDefaultDeclaration') {
+			console.log(node);
+			clsNode = node.declaration;
+		}
+
+		if (clsNode.type === 'ClassDeclaration') {
+			if (clsNode.decorators == null) {
 				continue;
 			}
 
-			const decorator = node.decorators[0];
+			const decorator = clsNode.decorators[0];
 			if (decorator?.expression.callee.name !== 'Injectable') {
 				continue;
 			}
 
-			result.push(node);
+			result.push(clsNode);
 		}
 	}
 
