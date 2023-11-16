@@ -1,7 +1,7 @@
 import type { PluginOption } from 'vite';
 import oxc from 'oxc-parser';
 
-const fileRegex = /\.(tsx)$/;
+const fileRegex = /\.(tsx|ts)$/;
 
 function findWoxImport(nodes: any[]) {
 	for (const node of nodes) {
