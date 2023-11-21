@@ -26,11 +26,10 @@ function findClassDeclarations(nodes: any[]): any[] {
 		}
 
 		if (node.type === 'ExportDefaultDeclaration') {
-			console.log(node);
 			clsNode = node.declaration;
 		}
 
-		if (clsNode.type === 'ClassDeclaration') {
+		if (clsNode?.type === 'ClassDeclaration') {
 			if (clsNode.decorators == null) {
 				continue;
 			}
