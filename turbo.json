@@ -6,6 +6,11 @@
 			"dependsOn": ["^build"]
 		},
 		"test": {
+			"outputs": [],
+			"dependsOn": ["build"],
+			"outputMode": "full"
+		},
+		"test:ci": {
 			"outputs": ["coverage/**"],
 			"dependsOn": ["build"],
 			"outputMode": "full"

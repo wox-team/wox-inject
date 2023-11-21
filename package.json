@@ -33,6 +33,7 @@
 		"lint": "cross-env tsc && eslint \"packages/**/*.{ts,tsx,mdx}\"",
 		"format": "cross-env prettier --write \"packages/**/*.{ts,tsx,mdx}\"",
 		"test": "cross-env turbo run test",
+		"test:ci": "cross-env turbo run test:ci",
 		"bench": "cross-env tsx bench/main.ts",
 		"bench:out": "cross-env DEBUG=use:output tsx bench/main.ts",
 		"version-packages": "cross-env changeset version",
