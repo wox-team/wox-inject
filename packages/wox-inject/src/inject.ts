@@ -154,10 +154,13 @@ interface Resolved<T> {
  */
 export class DependencyScope {
 	public readonly singletons: Resolved<unknown>[];
-	public readonly scoped: Resolved<unknown>[] = [];
+	public readonly inheritedScoped: Resolved<unknown>[];
+	public readonly scoped: Resolved<unknown>[];
 	public hotRegistrationRegister: Registration<any>[];
 
-	constructor(parentScope?: DependencyScope) {
+	constructor(parentScope?: DependencyScope, shouldInherit = true) {
+		this.scoped = [];
+		this.inheritedScoped = shouldInherit ? parentScope?.scoped ?? [] : [];
 		this.singletons = parentScope?.singletons ?? [];
 		this.hotRegistrationRegister = parentScope?.hotRegistrationRegister ?? [];
 	}
@@ -225,7 +228,11 @@ export class DependencyScope {
 		}
 
 		if (registration.settings.lifeTime === ServiceLifetimes.Scoped) {
-			return (this.scoped.find((x) => x.token === registration.token) as Resolved<T>) ?? null;
+			return (
+				(this.scoped.find((x) => x.token === registration.token) as Resolved<T>) ??
+				this.inheritedScoped.find((x) => x.token === registration.token) ??
+				null
+			);
 		}
 
 		return null;

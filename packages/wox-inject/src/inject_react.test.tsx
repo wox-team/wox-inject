@@ -25,7 +25,37 @@ test('useDependency, when used in a React component, should return expected clas
 	expect(screen.getByText('4')).toBeInTheDocument();
 });
 
-test('ResolutionProvider, when rendered, should create a new resolution for intermediate children', () => {
+test('ResolutionProvider, when rendered with useInheritanceLink -> false, should create a new instances for scoped dependencies', () => {
+	const deps = setupScopedResolution();
+
+	function Comp_1() {
+		const dep = useDependency(deps[4]);
+
+		dep.value = Symbol('mutated from comp 1');
+
+		return (
+			<>
+				<span>{dep.value.description}</span>
+
+				<ResolutionProvider useInheritanceLink={false}>
+					<Comp_2 />
+				</ResolutionProvider>
+			</>
+		);
+	}
+
+	function Comp_2() {
+		const dep = useDependency(deps[4]);
+
+		return <span>{dep.value.description}</span>;
+	}
+
+	render(<Comp_1 />);
+
+	expect(screen.getByText('4')).toBeInTheDocument();
+});
+
+test('ResolutionProvider, when rendered, should inherit scoped instances from parent', () => {
 	const deps = setupScopedResolution();
 
 	function Comp_1() {
@@ -52,7 +82,7 @@ test('ResolutionProvider, when rendered, should create a new resolution for inte
 
 	render(<Comp_1 />);
 
-	expect(screen.getByText('4')).toBeInTheDocument();
+	expect(screen.getAllByText('mutated from comp 1')).toHaveLength(2);
 });
 
 test('ResolutionProvider, when rendered, should be able to derive same singleton instances between resolutions', () => {

@@ -54,7 +54,24 @@ test('resolve, when procedural resolutions occurs between different containers, 
 	expect(_c2_d4._2._1).toBe(_c1_d4._2._1);
 });
 
-test('resolve, when procedural resolutions occurs between different containers, scoped instances should be unique per scope', () => {
+test('resolve, when procedural resolutions occurs between different containers, scoped instances should be unique per scope if not inherited', () => {
+	const deps = setupScopedResolution();
+
+	const scope_1 = new DependencyScope();
+	const container_1 = new InjectionContainer(scope_1);
+	const scope_2 = new DependencyScope(scope_1, false);
+	const container_2 = new InjectionContainer(scope_2);
+
+	container_1.resolve(deps[4]);
+	container_2.resolve(deps[4]);
+
+	const _c1_d4 = container_1.resolve(deps[4]);
+	const _c2_d4 = container_2.resolve(deps[4]);
+
+	expect(_c2_d4._2._1).not.toBe(_c1_d4._2._1);
+});
+
+test('resolve, when procedural resolutions occurs between different containers, scoped instances should not be unique per scope if inherited', () => {
 	const deps = setupScopedResolution();
 
 	const scope_1 = new DependencyScope();
@@ -68,7 +85,7 @@ test('resolve, when procedural resolutions occurs between different containers, 
 	const _c1_d4 = container_1.resolve(deps[4]);
 	const _c2_d4 = container_2.resolve(deps[4]);
 
-	expect(_c2_d4._2._1).not.toBe(_c1_d4._2._1);
+	expect(_c2_d4._2._1).toBe(_c1_d4._2._1);
 });
 
 test('resolve, when graphing identical nodes, should keep the same singleton instance until resolution complete', () => {

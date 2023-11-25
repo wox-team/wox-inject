@@ -10,6 +10,7 @@ const ResolutionContext = createContext(new InjectionContainer(new DependencySco
 
 interface ResolutionProviderProps extends React.PropsWithChildren {
 	parentContainer?: InjectionContainer;
+	useInheritanceLink?: boolean;
 }
 
 /**
@@ -33,7 +34,10 @@ interface ResolutionProviderProps extends React.PropsWithChildren {
 export function ResolutionProvider(props: ResolutionProviderProps) {
 	const parentContainer = useContext(ResolutionContext);
 	const container = useConstant(
-		() => new InjectionContainer(new DependencyScope(props.parentContainer?.linkScope() ?? parentContainer.linkScope())),
+		() =>
+			new InjectionContainer(
+				new DependencyScope(props.parentContainer?.linkScope() ?? parentContainer.linkScope(), props.useInheritanceLink ?? true),
+			),
 	);
 
 	return <ResolutionContext.Provider value={container}>{props.children}</ResolutionContext.Provider>;
