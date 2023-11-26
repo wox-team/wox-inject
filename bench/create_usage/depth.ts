@@ -8,7 +8,7 @@ export function createUsageBench(options: Options): BenchEntity {
 	bench.add('small tree', smallTree);
 
 	bench.addEventListener('error', (e) => {
-		console.error(e);
+		console.error('Bench terminated with error:\n', e);
 		process.exit(1);
 	});
 

@@ -1,9 +1,7 @@
 // Reason: Doing hacky stuff, and hacky stuff needs any.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import * as _woxInject from '../../packages/wox-inject/src/inject';
-// Monkey patches wonky ESM import... idk why named import doesn't work here...
-const woxInject = (_woxInject as any).default as typeof _woxInject;
+import * as woxInject from '../../packages/wox-inject/src/inject';
 
 let cache: any | null = null;
 
@@ -39,7 +37,10 @@ function setup(ignoreCache?: boolean): any {
 	class _4 {
 		value = Symbol(4);
 
-		constructor(public readonly _2: _2, public readonly _3: _3) {
+		constructor(
+			public readonly _2: _2,
+			public readonly _3: _3,
+		) {
 			// Empty
 		}
 	}
@@ -48,7 +49,10 @@ function setup(ignoreCache?: boolean): any {
 	class _5 {
 		value = Symbol(5);
 
-		constructor(public readonly _3: _3, public readonly _1: _1) {
+		constructor(
+			public readonly _3: _3,
+			public readonly _1: _1,
+		) {
 			// Empty
 		}
 	}
