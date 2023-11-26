@@ -1,4 +1,4 @@
-import { expect, test } from 'vitest';
+import { beforeEach, expect, test } from 'vitest';
 import { Injectable, ServiceLifetimes, clearRegistry } from './inject';
 import { createTestBed } from './testing';
 

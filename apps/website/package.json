@@ -1,5 +1,5 @@
 {
-	"name": "@wox-team/docs",
+	"name": "app/website",
 	"author": "wox team",
 	"license": "MIT",
 	"private": true,
@@ -16,10 +16,10 @@
 		"url": "https://github.com/wox-team/wox-inject/issues"
 	},
 	"dependencies": {
-		"next": "^13.0.6",
-		"nextra": "latest",
-		"nextra-theme-docs": "latest",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0"
+		"next": "14.0.3",
+		"nextra": "2.13.2",
+		"nextra-theme-docs": "2.13.2",
+		"react": "18.2.0",
+		"react-dom": "18.2.0"
 	}
 }

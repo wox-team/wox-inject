@@ -1,16 +1,18 @@
 {
-	"include": ["./src", "main.ts", "./tests"],
+	"include": ["./src", "main.ts", "./tests", "./vitest.setup.ts"],
 	"compilerOptions": {
 		"jsx": "react-jsx",
 		"target": "ESNext",
 		"module": "ESNext",
-		"types": ["@testing-library/jest-dom"],
 		"moduleResolution": "Node",
 		"lib": ["DOM", "DOM.Iterable", "ESNext"],
+		"typeRoots": [
+			"node_modules/@types"
+		],
 		"strict":                           true,
 		"noEmit":                           true,
 		"allowJs":                          false,
-		"skipLibCheck":                     false,
+		"skipLibCheck":                     true,
 		"isolatedModules":                  false, // This is only false due to incompatibilities with Jest and TS. See: https://vitejs.dev/guide/features.html#typescript
 		"esModuleInterop":                  false,
 		"resolveJsonModule":                true,

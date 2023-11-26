@@ -1,5 +1,5 @@
 {
-	"name": "@wox-team/app-fixture",
+	"name": "apps/fixture",
 	"description": "Dependency injection for React",
 	"author": "wox team",
 	"license": "MIT",
@@ -14,16 +14,16 @@
 		"clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
 	},
 	"dependencies": {
-		"react": "^18.0.0",
-		"react-dom": "^18.0.0",
-		"react-is": "^18.0.0",
 		"@wox-team/wox-inject": "workspace:*",
-		"@wox-team/wox-inject-vite": "workspace:*"
+		"@wox-team/wox-inject-vite": "workspace:*",
+		"react": "18.2.0",
+		"react-dom": "18.2.0",
+		"react-is": "18.2.0"
 	},
 	"peerDependencies": {
-		"react": "^18.0.0",
-		"react-dom": "^18.0.0",
-		"react-is": "^18.0.0"
+		"react": "18.0.0",
+		"react-dom": "18.0.0",
+		"react-is": "18.0.0"
 	},
 	"devDependencies": {
 		"react": "18.2.0",

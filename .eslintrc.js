@@ -25,20 +25,23 @@ module.exports = {
 		'plugin:react-hooks/recommended',
 		'plugin:jsx-a11y/strict',
 
-		// Basic config
+		// Basic config.
 		'eslint:recommended',
 
-		// Uses the recommended linting for jest-dom
+		// Uses the recommended linting for jest-dom.
 		'plugin:jest-dom/recommended',
 
-		// Uses the recommended rules from @typescript-eslint/eslint-plugin
+		// Uses the recommended rules from @typescript-eslint/eslint-plugin.
 		'plugin:@typescript-eslint/recommended',
 
 		// Enables eslint-plugin-prettier and eslint-config-prettier. This will display prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
 		'plugin:prettier/recommended',
+
+		// Uses next.js specific rules.
+		'next/core-web-vitals',
 	],
 	rules: {
-		// Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
+		// Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs.
 		// ↓ ↓ ↓
 		// Allows the namespace usage.
 		'@typescript-eslint/no-namespace': 0,
@@ -49,7 +52,7 @@ module.exports = {
 		// TypeScript's compiler already checks for duplicate function implementations.
 		'no-dupe-class-members': 0,
 
-		// Allows for "while (true)" statements
+		// Allows for "while (true)" statements.
 		'no-constant-condition': 0,
 
 		// Allows unused declarations but flags them with error.
@@ -83,7 +86,7 @@ module.exports = {
 		// Since React 17 this is no longer needed.
 		'react/react-in-jsx-scope': 0,
 
-		// Force EoL -> LF
+		// Force EoL -> LF.
 		'linebreak-style': ['error', 'unix'],
 		'prettier/prettier': [2, { endOfLine: 'lf' }],
 	},
