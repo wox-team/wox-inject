@@ -13,7 +13,7 @@ Making any resolve call for deep injected dependacies be `undefined`.
 It makes example like this not work as expected:
 
 ```tsx
-import { Injectable, useDependacy } from '@wox-team/wox-inject';
+import { Injectable, useResolve } from '@wox-team/wox-inject';
 
 @Injectable()
 class B {
@@ -26,7 +26,7 @@ class A {
 }
 
 function App() {
-	const a = useDependacy(A);
+	const a = useResolve(A);
 
 	//             b will be undefined here.
 	return <div>{a.b.data}</div>

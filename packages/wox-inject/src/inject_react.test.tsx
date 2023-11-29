@@ -1,7 +1,7 @@
 import { beforeEach, expect, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ControllerProtocol, ResolutionProvider, useController, useDependency } from './inject_react';
+import { ControllerProtocol, ResolutionProvider, useController, useResolve } from './inject_react';
 import { Injectable, clearRegistry, ServiceLifetimes } from './inject';
 import { setupScopedResolution, setupSingletonResolution } from '../tests/setup_dependencies';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ test('useDependency, when used in a React component, should return expected clas
 	const deps = setupScopedResolution();
 
 	function Comp() {
-		const dep = useDependency(deps[4]);
+		const dep = useResolve(deps[4]);
 
 		return <span>{dep.value.description}</span>;
 	}
@@ -29,7 +29,7 @@ test('ResolutionProvider, when rendered with useInheritanceLink -> false, should
 	const deps = setupScopedResolution();
 
 	function Comp_1() {
-		const dep = useDependency(deps[4]);
+		const dep = useResolve(deps[4]);
 
 		dep.value = Symbol('mutated from comp 1');
 
@@ -45,7 +45,7 @@ test('ResolutionProvider, when rendered with useInheritanceLink -> false, should
 	}
 
 	function Comp_2() {
-		const dep = useDependency(deps[4]);
+		const dep = useResolve(deps[4]);
 
 		return <span>{dep.value.description}</span>;
 	}
@@ -59,7 +59,7 @@ test('ResolutionProvider, when rendered, should inherit scoped instances from pa
 	const deps = setupScopedResolution();
 
 	function Comp_1() {
-		const dep = useDependency(deps[4]);
+		const dep = useResolve(deps[4]);
 
 		dep.value = Symbol('mutated from comp 1');
 
@@ -75,7 +75,7 @@ test('ResolutionProvider, when rendered, should inherit scoped instances from pa
 	}
 
 	function Comp_2() {
-		const dep = useDependency(deps[4]);
+		const dep = useResolve(deps[4]);
 
 		return <span>{dep.value.description}</span>;
 	}
@@ -89,7 +89,7 @@ test('ResolutionProvider, when rendered, should be able to derive same singleton
 	const deps = setupSingletonResolution();
 
 	function Comp_1() {
-		const dep = useDependency(deps[4]);
+		const dep = useResolve(deps[4]);
 
 		dep.value = Symbol('mutated from comp 1');
 
@@ -105,7 +105,7 @@ test('ResolutionProvider, when rendered, should be able to derive same singleton
 	}
 
 	function Comp_2() {
-		const dep = useDependency(deps[4]);
+		const dep = useResolve(deps[4]);
 
 		return <span>{dep.value.description}</span>;
 	}
@@ -124,7 +124,7 @@ test('experience for new library user, when copying example from the readme, sho
 	}
 
 	function App() {
-		const fooService = useDependency(FooService);
+		const fooService = useResolve(FooService);
 		const [msg, setMsg] = useState<string | null>(null);
 
 		return (
@@ -189,7 +189,7 @@ test('ResolutionProvider, when passed a parent InjectContainer, should be able t
 	testBed.mockRegister(A, A, ServiceLifetimes.Transient);
 
 	function Comp(): JSX.Element {
-		const dep = useDependency(A);
+		const dep = useResolve(A);
 
 		return <span>{dep.value}</span>;
 	}

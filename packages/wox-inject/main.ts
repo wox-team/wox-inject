@@ -11,6 +11,6 @@ export {
 	type LookupImpl,
 } from './src/inject';
 export { Injector } from './src/injector';
-export { ResolutionProvider, useController, useDependency, type ControllerProtocol } from './src/inject_react';
+export { ResolutionProvider, useController, useResolve, useDependency, type ControllerProtocol } from './src/inject_react';
 export { createTestBed } from './src/testing';
 export { withNewResolutionProvider } from './src/with_new_resolution_provider';

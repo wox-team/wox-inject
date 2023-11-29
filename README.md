@@ -40,7 +40,7 @@ class FooService {
 }
 
 function App() {
-  const fooService = useDependency(FooService);
+  const fooService = useResolve(FooService);
 
   return (
     <button onClick={() => {
