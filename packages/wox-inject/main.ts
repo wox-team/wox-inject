@@ -11,6 +11,13 @@ export {
 	type LookupImpl,
 } from './src/inject';
 export { Injector } from './src/injector';
-export { ResolutionProvider, useController, useResolve, useDependency, type ControllerProtocol } from './src/inject_react';
+export {
+	NewContainer,
+	ResolutionProvider,
+	useController,
+	useResolve,
+	useDependency,
+	type ControllerProtocol,
+} from './src/inject_react';
 export { createTestBed } from './src/testing';
 export { withNewContainer, withNewResolutionProvider } from './src/with_new_resolution_provider';

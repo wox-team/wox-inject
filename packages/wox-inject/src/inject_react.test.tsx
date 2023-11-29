@@ -1,7 +1,7 @@
 import { beforeEach, expect, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ControllerProtocol, ResolutionProvider, useController, useResolve } from './inject_react';
+import { ControllerProtocol, NewContainer, useController, useResolve } from './inject_react';
 import { Injectable, clearRegistry, ServiceLifetimes } from './inject';
 import { setupScopedResolution, setupSingletonResolution } from '../tests/setup_dependencies';
 import { useState } from 'react';
@@ -25,7 +25,7 @@ test('useDependency, when used in a React component, should return expected clas
 	expect(screen.getByText('4')).toBeInTheDocument();
 });
 
-test('ResolutionProvider, when rendered with useInheritanceLink -> false, should create a new instances for scoped dependencies', () => {
+test('NewContainer, when rendered with useInheritanceLink -> false, should create a new instances for scoped dependencies', () => {
 	const deps = setupScopedResolution();
 
 	function Comp_1() {
@@ -37,9 +37,9 @@ test('ResolutionProvider, when rendered with useInheritanceLink -> false, should
 			<>
 				<span>{dep.value.description}</span>
 
-				<ResolutionProvider useInheritanceLink={false}>
+				<NewContainer useInheritanceLink={false}>
 					<Comp_2 />
-				</ResolutionProvider>
+				</NewContainer>
 			</>
 		);
 	}
@@ -55,7 +55,7 @@ test('ResolutionProvider, when rendered with useInheritanceLink -> false, should
 	expect(screen.getByText('4')).toBeInTheDocument();
 });
 
-test('ResolutionProvider, when rendered, should inherit scoped instances from parent', () => {
+test('NewContainer, when rendered, should inherit scoped instances from parent', () => {
 	const deps = setupScopedResolution();
 
 	function Comp_1() {
@@ -67,9 +67,9 @@ test('ResolutionProvider, when rendered, should inherit scoped instances from pa
 			<>
 				<span>{dep.value.description}</span>
 
-				<ResolutionProvider>
+				<NewContainer>
 					<Comp_2 />
-				</ResolutionProvider>
+				</NewContainer>
 			</>
 		);
 	}
@@ -85,7 +85,7 @@ test('ResolutionProvider, when rendered, should inherit scoped instances from pa
 	expect(screen.getAllByText('mutated from comp 1')).toHaveLength(2);
 });
 
-test('ResolutionProvider, when rendered, should be able to derive same singleton instances between resolutions', () => {
+test('NewContainer, when rendered, should be able to derive same singleton instances between resolutions', () => {
 	const deps = setupSingletonResolution();
 
 	function Comp_1() {
@@ -97,9 +97,9 @@ test('ResolutionProvider, when rendered, should be able to derive same singleton
 			<>
 				<span>{dep.value.description}</span>
 
-				<ResolutionProvider>
+				<NewContainer>
 					<Comp_2 />
-				</ResolutionProvider>
+				</NewContainer>
 			</>
 		);
 	}
@@ -180,7 +180,7 @@ test('useController, when used in a React component, should return expected clas
 	expect(whenDemount).toHaveBeenCalledWith('C');
 });
 
-test('ResolutionProvider, when passed a parent InjectContainer, should be able to derive instances from it', () => {
+test('NewContainer, when passed a parent InjectContainer, should be able to derive instances from it', () => {
 	const testBed = createTestBed();
 
 	class A {
@@ -195,9 +195,9 @@ test('ResolutionProvider, when passed a parent InjectContainer, should be able t
 	}
 
 	render(
-		<ResolutionProvider parentContainer={testBed.injectionContainer}>
+		<NewContainer parentContainer={testBed.injectionContainer}>
 			<Comp />
-		</ResolutionProvider>,
+		</NewContainer>,
 	);
 
 	expect(screen.getByText('abc')).toBeInTheDocument();

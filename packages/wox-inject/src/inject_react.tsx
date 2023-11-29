@@ -8,7 +8,7 @@ import type { Token } from './inject';
 
 const ResolutionContext = createContext(new InjectionContainer(new DependencyScope()));
 
-interface ResolutionProviderProps extends React.PropsWithChildren {
+interface NewContainerProps extends React.PropsWithChildren {
 	parentContainer?: InjectionContainer;
 	useInheritanceLink?: boolean;
 }
@@ -18,20 +18,20 @@ interface ResolutionProviderProps extends React.PropsWithChildren {
  * When used, it creates a new dependency injection container and sets it as the context value,
  * allowing for isolated dependency management within its subtree.
  *
- * @param {ResolutionProviderProps} props - The properties and children to be rendered.
+ * @param {NewContainerProps} props - The properties and children to be rendered.
  * @returns {JSX.Element} A JSX element that wraps its children with an optional dependency resolution context.
  *
  * @example
- * // To enable isolated dependency resolution within a component subtree, wrap it with ResolutionProvider.
- * <ResolutionProvider>
+ * // To enable isolated dependency resolution within a component subtree, wrap it with NewContainer.
+ * <NewContainer>
  *   <ComponentWithDependencies />
- * </ResolutionProvider>
+ * </NewContainer>
  *
- * // Alternatively, the app can still function without using ResolutionProvider.
+ * // Alternatively, the app can still function without using NewContainer.
  * // In this case, dependency resolution will use the parent container's scope.
  * <ComponentWithDependencies />
  */
-export function ResolutionProvider(props: ResolutionProviderProps) {
+export function NewContainer(props: NewContainerProps) {
 	const parentContainer = useContext(ResolutionContext);
 	const container = useConstant(
 		() =>
@@ -42,6 +42,11 @@ export function ResolutionProvider(props: ResolutionProviderProps) {
 
 	return <ResolutionContext.Provider value={container}>{props.children}</ResolutionContext.Provider>;
 }
+
+/**
+ * @deprecated use "NewContainer" instead.
+ */
+export const ResolutionProvider = NewContainer;
 
 /**
  * A custom React hook for resolving and using dependencies from the dependency injection container.
