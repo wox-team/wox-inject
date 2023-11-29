@@ -44,11 +44,6 @@ export function NewContainer(props: NewContainerProps) {
 }
 
 /**
- * @deprecated use "NewContainer" instead.
- */
-export const ResolutionProvider = NewContainer;
-
-/**
  * A custom React hook for resolving and using dependencies from the dependency injection container.
  *
  * @param {Token<T>} dependencyToken - The token representing the desired dependency to resolve.
@@ -70,21 +65,11 @@ export function useResolve<T>(dependencyToken: Token<T>): T {
 	return value;
 }
 
-/**
- * @deprecated use "useResolve" instead.
- */
-export const useDependency = useResolve;
-
 export interface Lifecycle<T extends any[] = any[]> {
 	whenMount?(...args: T): any;
 	whenUpdate?(...args: T): any;
 	whenDemount?(...args: T): any;
 }
-
-/**
- * @deprecated use "Lifecycle" instead.
- */
-export type ControllerProtocol = Lifecycle;
 
 type ControllerCtor<T> = {
 	new (...args: any[]): T & Lifecycle;
@@ -142,11 +127,6 @@ export function useResolveLifecycle<T extends Lifecycle>(
 
 	return instance;
 }
-
-/**
- * @deprecated use "useResolveLifecycle" instead.
- */
-export const useController = useResolveLifecycle;
 
 function boxFn(fn: ((...args: any[]) => any) | undefined, params: any[]) {
 	try {

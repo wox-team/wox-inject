@@ -25,11 +25,6 @@ export enum Scopes {
 	Unknown,
 }
 
-/**
- * @deprecated use "Scopes" instead.
- */
-export const ServiceLifetimes = Scopes;
-
 interface RegistrationSettings {
 	readonly lifeTime: Scopes;
 }
@@ -258,11 +253,6 @@ export class Container {
 	}
 }
 
-/**
- * @deprecated use "Container" instead.
- */
-export const DependencyScope = Container;
-
 export class Resolution {
 	private static instanceCounter = 0;
 
@@ -447,11 +437,6 @@ export class Resolution {
 		return args;
 	}
 }
-
-/**
- * @deprecated use "Resolution" instead.
- */
-export const InjectionContainer = Resolution;
 
 interface NodeData {
 	id: Token<unknown>;

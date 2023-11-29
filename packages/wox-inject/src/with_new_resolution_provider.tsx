@@ -6,8 +6,3 @@ export function withNewContainer<T extends Record<string, unknown>>(Component: C
 		return <NewContainer>{<Component {...props} />}</NewContainer>;
 	};
 }
-
-/**
- * @deprecated use "withNewContainer" instead.
- */
-export const withNewResolutionProvider = withNewContainer;
