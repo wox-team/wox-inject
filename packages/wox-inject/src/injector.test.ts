@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest';
-import { Container, Injectable, InjectionContainer, Scopes, Token } from './inject';
+import { Container, Injectable, Resolution, Scopes, Token } from './inject';
 import { Injector } from './injector';
 
-test('Injector, when being resolved, should have stored a reference to the InjectionContainer', () => {
+test('Injector, when being resolved, should have stored a reference to the Resolution', () => {
 	@Injectable()
 	class Dep {
 		constructor(public injector: Injector) {}
@@ -10,14 +10,14 @@ test('Injector, when being resolved, should have stored a reference to the Injec
 	Injectable.naughtyReflection(Dep, [Injector]);
 
 	const scope = new Container();
-	const container = new InjectionContainer(scope);
+	const container = new Resolution(scope);
 
 	const dep = container.resolve(Dep);
 
-	expect(dep.injector['currentInjectionContainer']).toBe(container);
+	expect(dep.injector['currentResolution']).toBe(container);
 });
 
-test('Injector, when injector resolves a Singleton, should resolve from the referenced InjectionContainer', () => {
+test('Injector, when injector resolves a Singleton, should resolve from the referenced Resolution', () => {
 	@Injectable({
 		lifeTime: Scopes.Singleton,
 	})
@@ -31,7 +31,7 @@ test('Injector, when injector resolves a Singleton, should resolve from the refe
 	Injectable.naughtyReflection(Dep, [Injector]);
 
 	const scope = new Container();
-	const container = new InjectionContainer(scope);
+	const container = new Resolution(scope);
 
 	const dep = container.resolve(Dep);
 	const dep2 = dep.resolveFromInstance(Dep);
@@ -39,7 +39,7 @@ test('Injector, when injector resolves a Singleton, should resolve from the refe
 	expect(dep).toBe(dep2);
 });
 
-test('Injector, when injector resolves a Scoped, should resolve from the referenced InjectionContainer', () => {
+test('Injector, when injector resolves a Scoped, should resolve from the referenced Resolution', () => {
 	@Injectable({
 		lifeTime: Scopes.Scoped,
 	})
@@ -53,7 +53,7 @@ test('Injector, when injector resolves a Scoped, should resolve from the referen
 	Injectable.naughtyReflection(Dep, [Injector]);
 
 	const scope = new Container();
-	const container = new InjectionContainer(scope);
+	const container = new Resolution(scope);
 
 	const dep = container.resolve(Dep);
 	const dep2 = dep.resolveFromInstance(Dep);
@@ -61,7 +61,7 @@ test('Injector, when injector resolves a Scoped, should resolve from the referen
 	expect(dep).toBe(dep2);
 });
 
-test('Injector, when injector resolves a Transient, should resolve from the referenced InjectionContainer', () => {
+test('Injector, when injector resolves a Transient, should resolve from the referenced Resolution', () => {
 	@Injectable({
 		lifeTime: Scopes.Transient,
 	})
@@ -75,7 +75,7 @@ test('Injector, when injector resolves a Transient, should resolve from the refe
 	Injectable.naughtyReflection(Dep, [Injector]);
 
 	const scope = new Container();
-	const container = new InjectionContainer(scope);
+	const container = new Resolution(scope);
 
 	const dep = container.resolve(Dep);
 	const dep2 = dep.resolveFromInstance(Dep);

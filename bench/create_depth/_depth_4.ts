@@ -26,7 +26,7 @@ export function depth_4() {
 	woxInject.Injectable.naughtyReflection(_3, [_1, _2]);
 	woxInject.Injectable.naughtyReflection(_4, [_1, _2, _3]);
 
-	const container = new woxInject.InjectionContainer(new woxInject.Container());
+	const container = new woxInject.Resolution(new woxInject.Container());
 
 	const _ = container.resolve(_4);
 }

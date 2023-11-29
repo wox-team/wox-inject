@@ -1,5 +1,5 @@
 import { Scopes, type Token } from './inject';
-import { Container, InjectionContainer } from './inject';
+import { Container, Resolution } from './inject';
 
 /**
  * Creates a new TestBed instance, which is a container for
@@ -10,16 +10,16 @@ export function createTestBed() {
 }
 
 class TestBed {
-	public readonly injectionContainer: InjectionContainer;
+	public readonly resolution: Resolution;
 	public readonly container: Container;
 
 	constructor() {
 		this.container = new Container();
-		this.injectionContainer = new InjectionContainer(this.container);
+		this.resolution = new Resolution(this.container);
 	}
 
 	public resolve<T>(dependencyToken: Token<T>) {
-		return this.injectionContainer.resolve(dependencyToken);
+		return this.resolution.resolve(dependencyToken);
 	}
 
 	public mockRegister<T>(token: Token<any>, factory: T, lifeTime?: Scopes): void {
