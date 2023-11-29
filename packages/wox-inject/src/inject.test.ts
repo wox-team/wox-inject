@@ -1,5 +1,5 @@
 import { beforeEach, expect, test } from 'vitest';
-import { InjectionContainer, DependencyScope, clearRegistry, Injectable, LookupImpl, resolve, ServiceLifetimes } from './inject';
+import { InjectionContainer, DependencyScope, clearRegistry, Injectable, LookupImpl, resolve, Scopes } from './inject';
 import { setupScopedResolution, setupSingletonResolution, setupTransientResolution } from '../tests/setup_dependencies';
 import { createTestBed } from './testing';
 
@@ -178,7 +178,7 @@ test('Singleton instance, when being resolved multiple times in different branch
 	let resolvedTimes = 0;
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Singleton,
+		lifeTime: Scopes.Singleton,
 	})
 	class _1 {
 		value = Symbol(1);
@@ -190,7 +190,7 @@ test('Singleton instance, when being resolved multiple times in different branch
 	Injectable.naughtyReflection(_1, []);
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Singleton,
+		lifeTime: Scopes.Singleton,
 	})
 	class _2 {
 		value = Symbol(2);
@@ -202,7 +202,7 @@ test('Singleton instance, when being resolved multiple times in different branch
 	Injectable.naughtyReflection(_2, [_1]);
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Singleton,
+		lifeTime: Scopes.Singleton,
 	})
 	class _3 {
 		value = Symbol(3);
@@ -227,7 +227,7 @@ test('Scoped instance, when being resolved multiple times in different branches,
 	let resolvedTimes = 0;
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Scoped,
+		lifeTime: Scopes.Scoped,
 	})
 	class _1 {
 		value = Symbol(1);
@@ -239,7 +239,7 @@ test('Scoped instance, when being resolved multiple times in different branches,
 	Injectable.naughtyReflection(_1, []);
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Scoped,
+		lifeTime: Scopes.Scoped,
 	})
 	class _2 {
 		value = Symbol(2);
@@ -251,7 +251,7 @@ test('Scoped instance, when being resolved multiple times in different branches,
 	Injectable.naughtyReflection(_2, [_1]);
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Singleton,
+		lifeTime: Scopes.Singleton,
 	})
 	class _3 {
 		value = Symbol(3);
@@ -276,7 +276,7 @@ test('Scoped instance, when being resolved multiple times in different branches 
 	let resolvedTimes = 0;
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Scoped,
+		lifeTime: Scopes.Scoped,
 	})
 	class _1 {
 		value = Symbol(1);
@@ -288,7 +288,7 @@ test('Scoped instance, when being resolved multiple times in different branches 
 	Injectable.naughtyReflection(_1, []);
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Scoped,
+		lifeTime: Scopes.Scoped,
 	})
 	class _2 {
 		value = Symbol(2);
@@ -300,7 +300,7 @@ test('Scoped instance, when being resolved multiple times in different branches 
 	Injectable.naughtyReflection(_2, [_1]);
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Singleton,
+		lifeTime: Scopes.Singleton,
 	})
 	class _3 {
 		value = Symbol(3);
@@ -327,7 +327,7 @@ test('Transient instance, when being resolved multiple times in different branch
 	let resolvedTimes = 0;
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Transient,
+		lifeTime: Scopes.Transient,
 	})
 	class _1 {
 		value = Symbol(1);
@@ -339,7 +339,7 @@ test('Transient instance, when being resolved multiple times in different branch
 	Injectable.naughtyReflection(_1, []);
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Transient,
+		lifeTime: Scopes.Transient,
 	})
 	class _2 {
 		value = Symbol(2);
@@ -351,7 +351,7 @@ test('Transient instance, when being resolved multiple times in different branch
 	Injectable.naughtyReflection(_2, [_1]);
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Transient,
+		lifeTime: Scopes.Transient,
 	})
 	class _3 {
 		value = Symbol(3);

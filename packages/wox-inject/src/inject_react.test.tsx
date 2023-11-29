@@ -2,7 +2,7 @@ import { beforeEach, expect, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Lifecycle, NewContainer, useResolveLifecycle, useResolve } from './inject_react';
-import { Injectable, clearRegistry, ServiceLifetimes } from './inject';
+import { Injectable, clearRegistry, Scopes } from './inject';
 import { setupScopedResolution, setupSingletonResolution } from '../tests/setup_dependencies';
 import { useState } from 'react';
 import { createTestBed } from './testing';
@@ -186,7 +186,7 @@ test('NewContainer, when passed a parent InjectContainer, should be able to deri
 	class A {
 		value = 'abc';
 	}
-	testBed.mockRegister(A, A, ServiceLifetimes.Transient);
+	testBed.mockRegister(A, A, Scopes.Transient);
 
 	function Comp(): JSX.Element {
 		const dep = useResolve(A);

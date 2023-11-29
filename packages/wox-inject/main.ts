@@ -2,6 +2,7 @@ export {
 	DependencyScope,
 	Injectable,
 	InjectionContainer,
+	Scopes,
 	ServiceLifetimes,
 	clearRegistry,
 	resolve,
