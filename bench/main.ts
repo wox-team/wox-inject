@@ -4,6 +4,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { Console } from 'node:console';
 import { Transform } from 'node:stream';
+import os from 'node:os';
 import { Options } from 'tinybench';
 // Might sunset these tests...
 // import { createDepthBench } from './create_depth/depth';
@@ -58,7 +59,10 @@ if (USE_OUTPUT) {
 
 function print(console: Console): void {
 	benchEntities.forEach((e, i) => {
-		console.log('Results from: ' + e.title);
+		const cpuList = os.cpus().map((x, i) => `${i + 1} Model: ${x.model} | Speed: ${x.speed}`).join('\n')
+
+		console.log('CPU:s:\n' + cpuList + '\n');
+		console.log('Results from -> ' + e.title);
 		console.table(e.bench.table());
 
 		if (i !== benchEntities.length - 1) {
