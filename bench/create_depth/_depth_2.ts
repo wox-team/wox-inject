@@ -13,7 +13,7 @@ export function depth_2() {
 
 	woxInject.Injectable.naughtyReflection(_1, []);
 	woxInject.Injectable.naughtyReflection(_2, [_1]);
-	const container = new woxInject.InjectionContainer(new woxInject.Container());
+	const container = new woxInject.Resolution(new woxInject.Container());
 
 	const _ = container.resolve(_2);
 }

@@ -195,7 +195,7 @@ test('NewContainer, when passed a parent InjectContainer, should be able to deri
 	}
 
 	render(
-		<NewContainer parentContainer={testBed.injectionContainer}>
+		<NewContainer parentContainer={testBed.resolution}>
 			<Comp />
 		</NewContainer>,
 	);

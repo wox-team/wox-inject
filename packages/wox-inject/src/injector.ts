@@ -2,10 +2,10 @@ import { Injectable, Token, getResolveScopeRef } from './inject';
 
 @Injectable()
 export class Injector {
-	private readonly currentInjectionContainer = getResolveScopeRef();
+	private readonly currentResolution = getResolveScopeRef();
 
 	public resolve<T>(dependencyToken: Token<T>): T {
-		return this.currentInjectionContainer.resolve(dependencyToken);
+		return this.currentResolution.resolve(dependencyToken);
 	}
 }
 Injectable.naughtyReflection(Injector, []);

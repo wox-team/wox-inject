@@ -63,7 +63,7 @@ function setup(ignoreCache?: boolean): any {
 export function smallTree() {
 	const deps = setup();
 
-	const container = new woxInject.InjectionContainer(new woxInject.Container());
+	const container = new woxInject.Resolution(new woxInject.Container());
 
 	const _ = container.resolve(deps[4]);
 }

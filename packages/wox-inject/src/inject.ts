@@ -2,7 +2,7 @@
 import { Graph } from './_graph';
 import { todo } from '@wox-team/wox-app-vitals';
 
-let currentInjectionContainer: InjectionContainer | null = null;
+let currentResolution: Resolution | null = null;
 
 const NOOP = () => {
 	/* noop */
@@ -59,10 +59,10 @@ function INTERNAL_register<T>(
 	}
 }
 
-export function getResolveScopeRef(): InjectionContainer {
-	if (currentInjectionContainer == null) throw new Error('Could not reach the current injector');
+export function getResolveScopeRef(): Resolution {
+	if (currentResolution == null) throw new Error('Could not reach the current injector');
 
-	return currentInjectionContainer;
+	return currentResolution;
 }
 
 export function resolve<T>(token: Token<T>): T {
@@ -263,14 +263,14 @@ export class Container {
  */
 export const DependencyScope = Container;
 
-export class InjectionContainer {
+export class Resolution {
 	private static instanceCounter = 0;
 
 	public readonly id: number;
 	readonly #container: Container;
 
 	constructor(container: Readonly<Container>) {
-		this.id = InjectionContainer.instanceCounter++;
+		this.id = Resolution.instanceCounter++;
 
 		this.#container = container as Container;
 	}
@@ -281,7 +281,7 @@ export class InjectionContainer {
 
 	public resolve<T>(dependencyToken: Token<T>): T {
 		// eslint-disable-next-line @typescript-eslint/no-this-alias
-		currentInjectionContainer = this;
+		currentResolution = this;
 
 		// If the token, for this depth, has already been resolved. Return it.
 		const [resolved, registration] = this.#container.getPotentialResolvedDependency(dependencyToken);
@@ -395,7 +395,7 @@ export class InjectionContainer {
 			instance = newResolved.instance;
 		}
 
-		currentInjectionContainer = null;
+		currentResolution = null;
 
 		return instance;
 	}
@@ -447,6 +447,11 @@ export class InjectionContainer {
 		return args;
 	}
 }
+
+/**
+ * @deprecated use "Resolution" instead.
+ */
+export const InjectionContainer = Resolution;
 
 interface NodeData {
 	id: Token<unknown>;

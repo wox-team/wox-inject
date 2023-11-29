@@ -1004,7 +1004,7 @@ export function depth_32() {
 		_31,
 	]);
 
-	const container = new woxInject.InjectionContainer(new woxInject.Container());
+	const container = new woxInject.Resolution(new woxInject.Container());
 
 	const _ = container.resolve(_32);
 }
