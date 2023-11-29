@@ -13,65 +13,32 @@ export function depth_16() {
 
 	@woxInject.Injectable()
 	class _3 {
-		constructor(
-			public _1: _1,
-			public _2: _2,
-		) {}
+		constructor(public _1: _1, public _2: _2) {}
 	}
 
 	@woxInject.Injectable()
 	class _4 {
-		constructor(
-			public _1: _1,
-			public _2: _2,
-			public _3: _3,
-		) {}
+		constructor(public _1: _1, public _2: _2, public _3: _3) {}
 	}
 
 	@woxInject.Injectable()
 	class _5 {
-		constructor(
-			public _1: _1,
-			public _2: _2,
-			public _3: _3,
-			public _4: _4,
-		) {}
+		constructor(public _1: _1, public _2: _2, public _3: _3, public _4: _4) {}
 	}
 
 	@woxInject.Injectable()
 	class _6 {
-		constructor(
-			public _1: _1,
-			public _2: _2,
-			public _3: _3,
-			public _4: _4,
-			public _5: _5,
-		) {}
+		constructor(public _1: _1, public _2: _2, public _3: _3, public _4: _4, public _5: _5) {}
 	}
 
 	@woxInject.Injectable()
 	class _7 {
-		constructor(
-			public _1: _1,
-			public _2: _2,
-			public _3: _3,
-			public _4: _4,
-			public _5: _5,
-			public _6: _6,
-		) {}
+		constructor(public _1: _1, public _2: _2, public _3: _3, public _4: _4, public _5: _5, public _6: _6) {}
 	}
 
 	@woxInject.Injectable()
 	class _8 {
-		constructor(
-			public _1: _1,
-			public _2: _2,
-			public _3: _3,
-			public _4: _4,
-			public _5: _5,
-			public _6: _6,
-			public _7: _7,
-		) {}
+		constructor(public _1: _1, public _2: _2, public _3: _3, public _4: _4, public _5: _5, public _6: _6, public _7: _7) {}
 	}
 
 	@woxInject.Injectable()
@@ -231,7 +198,7 @@ export function depth_16() {
 	woxInject.Injectable.naughtyReflection(_15, [_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14]);
 	woxInject.Injectable.naughtyReflection(_16, [_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15]);
 
-	const container = new woxInject.InjectionContainer(new woxInject.DependencyScope());
+	const container = new woxInject.InjectionContainer(new woxInject.Container());
 
 	const _ = container.resolve(_16);
 }

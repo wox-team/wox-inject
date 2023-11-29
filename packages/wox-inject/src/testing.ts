@@ -1,5 +1,5 @@
 import { Scopes, type Token } from './inject';
-import { DependencyScope, InjectionContainer } from './inject';
+import { Container, InjectionContainer } from './inject';
 
 /**
  * Creates a new TestBed instance, which is a container for
@@ -11,11 +11,11 @@ export function createTestBed() {
 
 class TestBed {
 	public readonly injectionContainer: InjectionContainer;
-	public readonly dependencyScope: DependencyScope;
+	public readonly container: Container;
 
 	constructor() {
-		this.dependencyScope = new DependencyScope();
-		this.injectionContainer = new InjectionContainer(this.dependencyScope);
+		this.container = new Container();
+		this.injectionContainer = new InjectionContainer(this.container);
 	}
 
 	public resolve<T>(dependencyToken: Token<T>) {
@@ -23,10 +23,10 @@ class TestBed {
 	}
 
 	public mockRegister<T>(token: Token<any>, factory: T, lifeTime?: Scopes): void {
-		this.dependencyScope.addHotRegistration(token, factory, lifeTime);
+		this.container.addHotRegistration(token, factory, lifeTime);
 	}
 
 	public clearMocks() {
-		this.dependencyScope.clearHotRegistration();
+		this.container.clearHotRegistration();
 	}
 }

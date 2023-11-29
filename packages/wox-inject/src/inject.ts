@@ -155,15 +155,15 @@ interface Resolved<T> {
 }
 
 /**
- * The DependencyScope class has the responsibility is to hold onto all the resolved instances during runtime and providing easy to access
+ * The Container class has the responsibility is to hold onto all the resolved instances during runtime and providing easy to access
  */
-export class DependencyScope {
+export class Container {
 	public readonly singletons: Resolved<unknown>[];
 	public readonly inheritedScoped: Resolved<unknown>[];
 	public readonly scoped: Resolved<unknown>[];
 	public hotRegistrationRegister: Registration<any>[];
 
-	constructor(parentScope?: DependencyScope, shouldInherit = true) {
+	constructor(parentScope?: Container, shouldInherit = true) {
 		this.scoped = [];
 		this.inheritedScoped = shouldInherit ? parentScope?.scoped ?? [] : [];
 		this.singletons = parentScope?.singletons ?? [];
@@ -258,20 +258,25 @@ export class DependencyScope {
 	}
 }
 
+/**
+ * @deprecated use "Container" instead.
+ */
+export const DependencyScope = Container;
+
 export class InjectionContainer {
 	private static instanceCounter = 0;
 
 	public readonly id: number;
-	readonly #dependencyScope: DependencyScope;
+	readonly #container: Container;
 
-	constructor(dependencyScope: Readonly<DependencyScope>) {
+	constructor(container: Readonly<Container>) {
 		this.id = InjectionContainer.instanceCounter++;
 
-		this.#dependencyScope = dependencyScope as DependencyScope;
+		this.#container = container as Container;
 	}
 
-	public linkScope(): Readonly<DependencyScope> {
-		return this.#dependencyScope;
+	public linkScope(): Readonly<Container> {
+		return this.#container;
 	}
 
 	public resolve<T>(dependencyToken: Token<T>): T {
@@ -279,7 +284,7 @@ export class InjectionContainer {
 		currentInjectionContainer = this;
 
 		// If the token, for this depth, has already been resolved. Return it.
-		const [resolved, registration] = this.#dependencyScope.getPotentialResolvedDependency(dependencyToken);
+		const [resolved, registration] = this.#container.getPotentialResolvedDependency(dependencyToken);
 		if (resolved != null) return resolved;
 
 		const dependenciesForEachDependency = new Map<Token, Registration<unknown>[]>();
@@ -304,7 +309,7 @@ export class InjectionContainer {
 			dependencyGraph.lookupOrInsertNode(node);
 
 			const dependencies = INTERNAL_getCachedReflection(node.registration.token);
-			const registrations = dependencies.map((dependency) => this.#dependencyScope.scanRegistrationStrict(dependency));
+			const registrations = dependencies.map((dependency) => this.#container.scanRegistrationStrict(dependency));
 
 			for (const registration of registrations) {
 				if (registration == null) throw new Error('A dependency was not registered.');
@@ -342,7 +347,7 @@ export class InjectionContainer {
 				if (typeof token === 'symbol') {
 					todo('Non ctor injection');
 				} else {
-					let resolved = registration ? this.#dependencyScope.scanResolved(registration) : null;
+					let resolved = registration ? this.#container.scanResolved(registration) : null;
 					if (resolved == null) {
 						const args = this.step_two_retrieveArgs(token, dependenciesForEachDependency, transients);
 						const instance = new /* As Ctor */ (factory as any)(...args);
@@ -354,13 +359,13 @@ export class InjectionContainer {
 					}
 
 					if (registration.settings.lifeTime === Scopes.Singleton) {
-						this.#dependencyScope.singletons.push(resolved);
+						this.#container.singletons.push(resolved);
 
 						continue;
 					}
 
 					if (registration.settings.lifeTime === Scopes.Scoped) {
-						this.#dependencyScope.scoped.push(resolved);
+						this.#container.scoped.push(resolved);
 
 						continue;
 					}
@@ -382,7 +387,7 @@ export class InjectionContainer {
 		if (registration.settings.lifeTime === Scopes.Transient) {
 			instance = transients[0].instance as T;
 		} else {
-			const newResolved = this.#dependencyScope.scanResolved(registration);
+			const newResolved = this.#container.scanResolved(registration);
 			if (newResolved == null) {
 				todo('Cannot get the complete resolution');
 			}
@@ -428,7 +433,7 @@ export class InjectionContainer {
 				instance = transients[i].instance;
 				transients.splice(i, 1);
 			} else {
-				const resolved = this.#dependencyScope.scanResolved(dep);
+				const resolved = this.#container.scanResolved(dep);
 				if (resolved == null) {
 					todo('Failed to a resolved dep');
 				}

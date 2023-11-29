@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { DependencyScope, Injectable, InjectionContainer, Scopes, Token } from './inject';
+import { Container, Injectable, InjectionContainer, Scopes, Token } from './inject';
 import { Injector } from './injector';
 
 test('Injector, when being resolved, should have stored a reference to the InjectionContainer', () => {
@@ -9,7 +9,7 @@ test('Injector, when being resolved, should have stored a reference to the Injec
 	}
 	Injectable.naughtyReflection(Dep, [Injector]);
 
-	const scope = new DependencyScope();
+	const scope = new Container();
 	const container = new InjectionContainer(scope);
 
 	const dep = container.resolve(Dep);
@@ -30,7 +30,7 @@ test('Injector, when injector resolves a Singleton, should resolve from the refe
 	}
 	Injectable.naughtyReflection(Dep, [Injector]);
 
-	const scope = new DependencyScope();
+	const scope = new Container();
 	const container = new InjectionContainer(scope);
 
 	const dep = container.resolve(Dep);
@@ -52,7 +52,7 @@ test('Injector, when injector resolves a Scoped, should resolve from the referen
 	}
 	Injectable.naughtyReflection(Dep, [Injector]);
 
-	const scope = new DependencyScope();
+	const scope = new Container();
 	const container = new InjectionContainer(scope);
 
 	const dep = container.resolve(Dep);
@@ -74,7 +74,7 @@ test('Injector, when injector resolves a Transient, should resolve from the refe
 	}
 	Injectable.naughtyReflection(Dep, [Injector]);
 
-	const scope = new DependencyScope();
+	const scope = new Container();
 	const container = new InjectionContainer(scope);
 
 	const dep = container.resolve(Dep);

@@ -1,4 +1,5 @@
 export {
+	Container,
 	DependencyScope,
 	Injectable,
 	InjectionContainer,

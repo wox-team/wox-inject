@@ -1,5 +1,5 @@
 import { beforeEach, expect, test } from 'vitest';
-import { InjectionContainer, DependencyScope, clearRegistry, Injectable, LookupImpl, resolve, Scopes } from './inject';
+import { InjectionContainer, Container, clearRegistry, Injectable, LookupImpl, resolve, Scopes } from './inject';
 import { setupScopedResolution, setupSingletonResolution, setupTransientResolution } from '../tests/setup_dependencies';
 import { createTestBed } from './testing';
 
@@ -10,7 +10,7 @@ beforeEach(() => {
 test('resolve, when obtaining the required scoped dependencies, should complete the dependency resolution', () => {
 	const deps = setupScopedResolution();
 
-	const scope = new DependencyScope();
+	const scope = new Container();
 	const container = new InjectionContainer(scope);
 	const dep = container.resolve(deps[2]);
 
@@ -20,7 +20,7 @@ test('resolve, when obtaining the required scoped dependencies, should complete 
 test('resolve, when obtaining the required singleton dependencies, should complete the dependency resolution', () => {
 	const deps = setupSingletonResolution();
 
-	const scope = new DependencyScope();
+	const scope = new Container();
 	const container = new InjectionContainer(scope);
 	const dep = container.resolve(deps[2]);
 
@@ -30,7 +30,7 @@ test('resolve, when obtaining the required singleton dependencies, should comple
 test('resolve, when obtaining the required transient dependencies, should complete the dependency resolution', () => {
 	const deps = setupTransientResolution();
 
-	const scope = new DependencyScope();
+	const scope = new Container();
 	const container = new InjectionContainer(scope);
 	const dep = container.resolve(deps[2]);
 
@@ -40,9 +40,9 @@ test('resolve, when obtaining the required transient dependencies, should comple
 test('resolve, when procedural resolutions occurs between different containers, singletons instances should remain the same', () => {
 	const deps = setupSingletonResolution();
 
-	const scope_1 = new DependencyScope();
+	const scope_1 = new Container();
 	const container_1 = new InjectionContainer(scope_1);
-	const scope_2 = new DependencyScope(scope_1);
+	const scope_2 = new Container(scope_1);
 	const container_2 = new InjectionContainer(scope_2);
 
 	container_1.resolve(deps[4]);
@@ -57,9 +57,9 @@ test('resolve, when procedural resolutions occurs between different containers, 
 test('resolve, when procedural resolutions occurs between different containers, scoped instances should be unique per scope if not inherited', () => {
 	const deps = setupScopedResolution();
 
-	const scope_1 = new DependencyScope();
+	const scope_1 = new Container();
 	const container_1 = new InjectionContainer(scope_1);
-	const scope_2 = new DependencyScope(scope_1, false);
+	const scope_2 = new Container(scope_1, false);
 	const container_2 = new InjectionContainer(scope_2);
 
 	container_1.resolve(deps[4]);
@@ -74,9 +74,9 @@ test('resolve, when procedural resolutions occurs between different containers, 
 test('resolve, when procedural resolutions occurs between different containers, scoped instances should not be unique per scope if inherited', () => {
 	const deps = setupScopedResolution();
 
-	const scope_1 = new DependencyScope();
+	const scope_1 = new Container();
 	const container_1 = new InjectionContainer(scope_1);
-	const scope_2 = new DependencyScope(scope_1);
+	const scope_2 = new Container(scope_1);
 	const container_2 = new InjectionContainer(scope_2);
 
 	container_1.resolve(deps[4]);
@@ -91,7 +91,7 @@ test('resolve, when procedural resolutions occurs between different containers, 
 test('resolve, when graphing identical nodes, should keep the same singleton instance until resolution complete', () => {
 	const deps = setupSingletonResolution();
 
-	const scope_1 = new DependencyScope();
+	const scope_1 = new Container();
 	const container_1 = new InjectionContainer(scope_1);
 
 	container_1.resolve(deps[4]);
@@ -104,7 +104,7 @@ test('resolve, when graphing identical nodes, should keep the same singleton ins
 test('resolve, when graphing identical nodes, should keep the same scoped instance until resolution complete', () => {
 	const deps = setupScopedResolution();
 
-	const scope_1 = new DependencyScope();
+	const scope_1 = new Container();
 	const container_1 = new InjectionContainer(scope_1);
 
 	container_1.resolve(deps[4]);
@@ -117,7 +117,7 @@ test('resolve, when graphing identical nodes, should keep the same scoped instan
 test('resolve, when graphing identical nodes, should not keep the same transient instance until resolution complete', () => {
 	const deps = setupTransientResolution();
 
-	const scope_1 = new DependencyScope();
+	const scope_1 = new Container();
 	const container = new InjectionContainer(scope_1);
 
 	const _4 = container.resolve(deps[4]);
@@ -166,7 +166,7 @@ test.skip('resolve function, when invoked during ctor creation, should finish re
 	}
 	Injectable.naughtyReflection(ParentDep, []);
 
-	const scope = new DependencyScope();
+	const scope = new Container();
 	const container = new InjectionContainer(scope);
 
 	const dep = container.resolve(ParentDep);
@@ -213,7 +213,7 @@ test('Singleton instance, when being resolved multiple times in different branch
 	}
 	Injectable.naughtyReflection(_3, [_2]);
 
-	const scope = new DependencyScope();
+	const scope = new Container();
 	const container_1 = new InjectionContainer(scope);
 
 	container_1.resolve(_1);
@@ -262,7 +262,7 @@ test('Scoped instance, when being resolved multiple times in different branches,
 	}
 	Injectable.naughtyReflection(_3, [_2]);
 
-	const scope = new DependencyScope();
+	const scope = new Container();
 	const container_1 = new InjectionContainer(scope);
 
 	container_1.resolve(_1);
@@ -311,7 +311,7 @@ test('Scoped instance, when being resolved multiple times in different branches 
 	}
 	Injectable.naughtyReflection(_3, [_2]);
 
-	const scope = new DependencyScope();
+	const scope = new Container();
 	const container_1 = new InjectionContainer(scope);
 
 	const container_2 = new InjectionContainer(scope);
@@ -362,7 +362,7 @@ test('Transient instance, when being resolved multiple times in different branch
 	}
 	Injectable.naughtyReflection(_3, [_2]);
 
-	const scope = new DependencyScope();
+	const scope = new Container();
 	const container_1 = new InjectionContainer(scope);
 
 	container_1.resolve(_1);
