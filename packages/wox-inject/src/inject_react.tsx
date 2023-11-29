@@ -3,10 +3,10 @@
 
 import { useConstant } from '@wox-team/wox-app-vitals';
 import { createContext, useContext, useLayoutEffect, useRef } from 'react';
-import { DependencyScope, InjectionContainer } from './inject';
+import { Container, InjectionContainer } from './inject';
 import type { Token } from './inject';
 
-const ResolutionContext = createContext(new InjectionContainer(new DependencyScope()));
+const ResolutionContext = createContext(new InjectionContainer(new Container()));
 
 interface NewContainerProps extends React.PropsWithChildren {
 	parentContainer?: InjectionContainer;
@@ -36,7 +36,7 @@ export function NewContainer(props: NewContainerProps) {
 	const container = useConstant(
 		() =>
 			new InjectionContainer(
-				new DependencyScope(props.parentContainer?.linkScope() ?? parentContainer.linkScope(), props.useInheritanceLink ?? true),
+				new Container(props.parentContainer?.linkScope() ?? parentContainer.linkScope(), props.useInheritanceLink ?? true),
 			),
 	);
 

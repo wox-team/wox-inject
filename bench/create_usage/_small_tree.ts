@@ -37,10 +37,7 @@ function setup(ignoreCache?: boolean): any {
 	class _4 {
 		value = Symbol(4);
 
-		constructor(
-			public readonly _2: _2,
-			public readonly _3: _3,
-		) {
+		constructor(public readonly _2: _2, public readonly _3: _3) {
 			// Empty
 		}
 	}
@@ -49,10 +46,7 @@ function setup(ignoreCache?: boolean): any {
 	class _5 {
 		value = Symbol(5);
 
-		constructor(
-			public readonly _3: _3,
-			public readonly _1: _1,
-		) {
+		constructor(public readonly _3: _3, public readonly _1: _1) {
 			// Empty
 		}
 	}
@@ -69,7 +63,7 @@ function setup(ignoreCache?: boolean): any {
 export function smallTree() {
 	const deps = setup();
 
-	const container = new woxInject.InjectionContainer(new woxInject.DependencyScope());
+	const container = new woxInject.InjectionContainer(new woxInject.Container());
 
 	const _ = container.resolve(deps[4]);
 }
