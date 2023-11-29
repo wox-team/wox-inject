@@ -1,7 +1,7 @@
 import { beforeEach, expect, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ControllerProtocol, NewContainer, useController, useResolve } from './inject_react';
+import { ControllerProtocol, NewContainer, useResolveLifecycle, useResolve } from './inject_react';
 import { Injectable, clearRegistry, ServiceLifetimes } from './inject';
 import { setupScopedResolution, setupSingletonResolution } from '../tests/setup_dependencies';
 import { useState } from 'react';
@@ -148,7 +148,7 @@ test('experience for new library user, when copying example from the readme, sho
 	expect(screen.getByText('hello there!')).toBeInTheDocument();
 });
 
-test('useController, when used in a React component, should return expected class instance', () => {
+test('useResolveLifecycle, when used in a React component, should return expected class instance', () => {
 	const whenMount = vi.fn<[_arg_one: string]>();
 	const whenUpdate = vi.fn<[_arg_one: string]>();
 	const whenDemount = vi.fn<[_arg_one: string]>();
@@ -161,7 +161,7 @@ test('useController, when used in a React component, should return expected clas
 	}
 
 	function Comp({ arg_one }: { arg_one?: string }) {
-		useController(C, arg_one ?? 'A');
+		useResolveLifecycle(C, arg_one ?? 'A');
 
 		return null;
 	}

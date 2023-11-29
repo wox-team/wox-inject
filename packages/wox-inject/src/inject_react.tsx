@@ -94,13 +94,13 @@ type ControllerCtor<T> = {
  * @template T
  *
  * @example
- * // Use useController to resolve and use a controller in a React component.
+ * // Use useResolveLifecycle to resolve and use a controller in a React component.
  * function MyComponent() {
- *   const controller = useController(MyControllerToken);
+ *   const controller = useResolveLifecycle(MyControllerToken);
  *   // Now you can use the controller instance within your component.
  * }
  */
-export function useController<T extends ControllerProtocol>(
+export function useResolveLifecycle<T extends ControllerProtocol>(
 	dependencyToken: ControllerCtor<T>,
 	...params: T['whenMount'] extends (...args: any) => any
 		? Parameters<T['whenMount']>
@@ -137,6 +137,11 @@ export function useController<T extends ControllerProtocol>(
 
 	return instance;
 }
+
+/**
+ * @deprecated use "useResolveLifecycle" instead.
+ */
+export const useController = useResolveLifecycle;
 
 function boxFn(fn: ((...args: any[]) => any) | undefined, params: any[]) {
 	try {
