@@ -1,7 +1,7 @@
 import { beforeEach, expect, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ControllerProtocol, NewContainer, useResolveLifecycle, useResolve } from './inject_react';
+import { Lifecycle, NewContainer, useResolveLifecycle, useResolve } from './inject_react';
 import { Injectable, clearRegistry, ServiceLifetimes } from './inject';
 import { setupScopedResolution, setupSingletonResolution } from '../tests/setup_dependencies';
 import { useState } from 'react';
@@ -154,7 +154,7 @@ test('useResolveLifecycle, when used in a React component, should return expecte
 	const whenDemount = vi.fn<[_arg_one: string]>();
 
 	@Injectable()
-	class C implements ControllerProtocol {
+	class C implements Lifecycle {
 		whenMount = whenMount;
 		whenUpdate = whenUpdate;
 		whenDemount = whenDemount;

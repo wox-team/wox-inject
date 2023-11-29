@@ -18,6 +18,7 @@ export {
 	useController,
 	useResolve,
 	useDependency,
+	type Lifecycle,
 	type ControllerProtocol,
 } from './src/inject_react';
 export { createTestBed } from './src/testing';

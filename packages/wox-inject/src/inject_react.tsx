@@ -75,14 +75,19 @@ export function useResolve<T>(dependencyToken: Token<T>): T {
  */
 export const useDependency = useResolve;
 
-export interface ControllerProtocol<T extends any[] = any[]> {
+export interface Lifecycle<T extends any[] = any[]> {
 	whenMount?(...args: T): any;
 	whenUpdate?(...args: T): any;
 	whenDemount?(...args: T): any;
 }
 
+/**
+ * @deprecated use "Lifecycle" instead.
+ */
+export type ControllerProtocol = Lifecycle;
+
 type ControllerCtor<T> = {
-	new (...args: any[]): T & ControllerProtocol;
+	new (...args: any[]): T & Lifecycle;
 };
 
 /**
@@ -100,7 +105,7 @@ type ControllerCtor<T> = {
  *   // Now you can use the controller instance within your component.
  * }
  */
-export function useResolveLifecycle<T extends ControllerProtocol>(
+export function useResolveLifecycle<T extends Lifecycle>(
 	dependencyToken: ControllerCtor<T>,
 	...params: T['whenMount'] extends (...args: any) => any
 		? Parameters<T['whenMount']>
