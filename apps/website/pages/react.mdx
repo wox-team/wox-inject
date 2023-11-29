@@ -17,7 +17,7 @@ To use the dependency injection system in React you need to install the `@wox-te
 pnpm add @wox-team/wox-inject
 ```
 
-Once installed you can use the `useDependacy` hook to inject a dependency into your component:
+Once installed you can use the `useResolve` hook to inject a dependency into your component:
 
 ```tsx
 import { Injectable } from '@wox-team/wox-inject';
@@ -30,7 +30,7 @@ class MyService {
 }
 
 function App() {
-	const myService = useDependacy(MyService);
+	const myService = useResolve(MyService);
 
 	return <div>{myService.greet()}</div>;
 }

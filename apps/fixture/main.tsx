@@ -1,4 +1,4 @@
-import { Injectable, useDependency } from '@wox-team/wox-inject';
+import { Injectable, useResolve } from '@wox-team/wox-inject';
 import { createRoot } from 'react-dom/client';
 
 @Injectable()
@@ -20,7 +20,7 @@ class FooService {
 }
 
 function App() {
-	const fooService = useDependency(FooService);
+	const fooService = useResolve(FooService);
 
 	return (
 		<button

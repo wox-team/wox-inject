@@ -52,18 +52,23 @@ export function ResolutionProvider(props: ResolutionProviderProps) {
  * @template T
  *
  * @example
- * // Use useDependency to resolve and use a dependency in a functional component.
+ * // Use useResolve to resolve and use a dependency in a functional component.
  * function MyComponent() {
- *   const someService = useDependency(SomeServiceToken);
+ *   const someService = useResolve(SomeServiceToken);
  *   // Now you can use someService within your component.
  * }
  */
-export function useDependency<T>(dependencyToken: Token<T>): T {
+export function useResolve<T>(dependencyToken: Token<T>): T {
 	const container = useContext(ResolutionContext);
 	const value = useConstant(() => container.resolve(dependencyToken));
 
 	return value;
 }
+
+/**
+ * @deprecated use "useResolve" instead.
+ */
+export const useDependency = useResolve;
 
 export interface ControllerProtocol<T extends any[] = any[]> {
 	whenMount?(...args: T): any;
@@ -100,7 +105,7 @@ export function useController<T extends ControllerProtocol>(
 		? Parameters<T['whenDemount']>
 		: never[]
 ): T {
-	const instance = useDependency(dependencyToken);
+	const instance = useResolve(dependencyToken);
 	const hasCalledMount = useRef(false);
 	const latestParams = useRef(params);
 
