@@ -1,4 +1,4 @@
-import { Injectable, ServiceLifetimes } from '../src/inject';
+import { Injectable, Scopes } from '../src/inject';
 
 export function setupScopedResolution() {
 	@Injectable()
@@ -43,14 +43,14 @@ export function setupScopedResolution() {
 
 export function setupSingletonResolution() {
 	@Injectable({
-		lifeTime: ServiceLifetimes.Singleton,
+		lifeTime: Scopes.Singleton,
 	})
 	class _1 {
 		value = Symbol(1);
 	}
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Singleton,
+		lifeTime: Scopes.Singleton,
 	})
 	class _2 {
 		value = Symbol(2);
@@ -61,7 +61,7 @@ export function setupSingletonResolution() {
 	}
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Singleton,
+		lifeTime: Scopes.Singleton,
 	})
 	class _3 {
 		value = Symbol(3);
@@ -72,7 +72,7 @@ export function setupSingletonResolution() {
 	}
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Singleton,
+		lifeTime: Scopes.Singleton,
 	})
 	class _4 {
 		value = Symbol(4);
@@ -92,14 +92,14 @@ export function setupSingletonResolution() {
 
 export function setupTransientResolution() {
 	@Injectable({
-		lifeTime: ServiceLifetimes.Transient,
+		lifeTime: Scopes.Transient,
 	})
 	class _1 {
 		value = Symbol(1);
 	}
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Transient,
+		lifeTime: Scopes.Transient,
 	})
 	class _2 {
 		value = Symbol(2);
@@ -110,7 +110,7 @@ export function setupTransientResolution() {
 	}
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Transient,
+		lifeTime: Scopes.Transient,
 	})
 	class _3 {
 		value = Symbol(3);
@@ -121,7 +121,7 @@ export function setupTransientResolution() {
 	}
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Transient,
+		lifeTime: Scopes.Transient,
 	})
 	class _4 {
 		value = Symbol(4);

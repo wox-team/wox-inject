@@ -1,5 +1,5 @@
 import { beforeEach, expect, test } from 'vitest';
-import { Injectable, ServiceLifetimes, clearRegistry } from './inject';
+import { Injectable, Scopes, clearRegistry } from './inject';
 import { createTestBed } from './testing';
 
 beforeEach(() => {
@@ -8,14 +8,14 @@ beforeEach(() => {
 
 test('Singleton over-register, when developers register mock values for a token, it should retrieve the mock value', () => {
 	@Injectable({
-		lifeTime: ServiceLifetimes.Singleton,
+		lifeTime: Scopes.Singleton,
 	})
 	class Child {
 		data = 'should be replaced';
 	}
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Singleton,
+		lifeTime: Scopes.Singleton,
 	})
 	class Parent {
 		constructor(public readonly child: Child) {
@@ -39,14 +39,14 @@ test('Singleton over-register, when developers register mock values for a token,
 
 test('Scoped over-register, when developers register mock values for a token, it should retrieve the mock value', () => {
 	@Injectable({
-		lifeTime: ServiceLifetimes.Scoped,
+		lifeTime: Scopes.Scoped,
 	})
 	class Child {
 		data = 'should be replaced';
 	}
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Scoped,
+		lifeTime: Scopes.Scoped,
 	})
 	class Parent {
 		constructor(public readonly child: Child) {
@@ -70,14 +70,14 @@ test('Scoped over-register, when developers register mock values for a token, it
 
 test('Transient over-register, when developers register mock values for a token, it should retrieve the mock value', () => {
 	@Injectable({
-		lifeTime: ServiceLifetimes.Transient,
+		lifeTime: Scopes.Transient,
 	})
 	class Child {
 		data = 'should be replaced';
 	}
 
 	@Injectable({
-		lifeTime: ServiceLifetimes.Transient,
+		lifeTime: Scopes.Transient,
 	})
 	class Parent {
 		constructor(public readonly child: Child) {

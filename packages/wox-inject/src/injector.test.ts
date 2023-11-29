@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { DependencyScope, Injectable, InjectionContainer, ServiceLifetimes, Token } from './inject';
+import { DependencyScope, Injectable, InjectionContainer, Scopes, Token } from './inject';
 import { Injector } from './injector';
 
 test('Injector, when being resolved, should have stored a reference to the InjectionContainer', () => {
@@ -19,7 +19,7 @@ test('Injector, when being resolved, should have stored a reference to the Injec
 
 test('Injector, when injector resolves a Singleton, should resolve from the referenced InjectionContainer', () => {
 	@Injectable({
-		lifeTime: ServiceLifetimes.Singleton,
+		lifeTime: Scopes.Singleton,
 	})
 	class Dep {
 		constructor(public injector: Injector) {}
@@ -41,7 +41,7 @@ test('Injector, when injector resolves a Singleton, should resolve from the refe
 
 test('Injector, when injector resolves a Scoped, should resolve from the referenced InjectionContainer', () => {
 	@Injectable({
-		lifeTime: ServiceLifetimes.Scoped,
+		lifeTime: Scopes.Scoped,
 	})
 	class Dep {
 		constructor(public injector: Injector) {}
@@ -63,7 +63,7 @@ test('Injector, when injector resolves a Scoped, should resolve from the referen
 
 test('Injector, when injector resolves a Transient, should resolve from the referenced InjectionContainer', () => {
 	@Injectable({
-		lifeTime: ServiceLifetimes.Transient,
+		lifeTime: Scopes.Transient,
 	})
 	class Dep {
 		constructor(public injector: Injector) {}

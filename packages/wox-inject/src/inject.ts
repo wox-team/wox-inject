@@ -17,7 +17,7 @@ export type GenericClassDecorator<T> = (target: T) => void;
 
 export type Token<T = unknown> = Ctor<T> | symbol;
 
-export enum ServiceLifetimes {
+export enum Scopes {
 	Singleton,
 	Transient,
 	Scoped,
@@ -25,8 +25,13 @@ export enum ServiceLifetimes {
 	Unknown,
 }
 
+/**
+ * @deprecated use "Scopes" instead.
+ */
+export const ServiceLifetimes = Scopes;
+
 interface RegistrationSettings {
-	readonly lifeTime: ServiceLifetimes;
+	readonly lifeTime: Scopes;
 }
 
 interface Registration<T> {
@@ -125,7 +130,7 @@ export function Injectable(settings?: RegistrationSettings, __fake__reflection?:
 			ctor,
 			ctor,
 			settings ?? {
-				lifeTime: ServiceLifetimes.Scoped,
+				lifeTime: Scopes.Scoped,
 			},
 			__fake__reflection,
 		);
@@ -134,9 +139,9 @@ export function Injectable(settings?: RegistrationSettings, __fake__reflection?:
 
 export type LookupImpl = <T>(token: Token<T>) => T extends Ctor<any> ? ConcreteMappedSymbols<ConstructorParameters<T>> : Token[];
 
-export function register<T>(token: Token<any>, someValue: Ctor<T>, lifeTime?: ServiceLifetimes): void {
+export function register<T>(token: Token<any>, someValue: Ctor<T>, lifeTime?: Scopes): void {
 	INTERNAL_register(token, someValue, {
-		lifeTime: lifeTime ?? ServiceLifetimes.Scoped,
+		lifeTime: lifeTime ?? Scopes.Scoped,
 	});
 }
 
@@ -223,11 +228,11 @@ export class DependencyScope {
 	}
 
 	public scanResolved<T>(registration: Registration<T>): Resolved<T> | null {
-		if (registration.settings.lifeTime === ServiceLifetimes.Singleton) {
+		if (registration.settings.lifeTime === Scopes.Singleton) {
 			return (this.singletons.find((x) => x.token === registration.token) as Resolved<T>) ?? null;
 		}
 
-		if (registration.settings.lifeTime === ServiceLifetimes.Scoped) {
+		if (registration.settings.lifeTime === Scopes.Scoped) {
 			return (
 				(this.scoped.find((x) => x.token === registration.token) as Resolved<T>) ??
 				this.inheritedScoped.find((x) => x.token === registration.token) ??
@@ -238,12 +243,12 @@ export class DependencyScope {
 		return null;
 	}
 
-	public addHotRegistration<T>(dependencyToken: Token<T>, value: any, lifetime?: ServiceLifetimes): void {
+	public addHotRegistration<T>(dependencyToken: Token<T>, value: any, lifetime?: Scopes): void {
 		this.hotRegistrationRegister.push({
 			token: dependencyToken,
 			someValue: value as any,
 			settings: {
-				lifeTime: lifetime ?? ServiceLifetimes.Unknown,
+				lifeTime: lifetime ?? Scopes.Unknown,
 			},
 		});
 	}
@@ -348,19 +353,19 @@ export class InjectionContainer {
 						} satisfies Resolved<unknown>;
 					}
 
-					if (registration.settings.lifeTime === ServiceLifetimes.Singleton) {
+					if (registration.settings.lifeTime === Scopes.Singleton) {
 						this.#dependencyScope.singletons.push(resolved);
 
 						continue;
 					}
 
-					if (registration.settings.lifeTime === ServiceLifetimes.Scoped) {
+					if (registration.settings.lifeTime === Scopes.Scoped) {
 						this.#dependencyScope.scoped.push(resolved);
 
 						continue;
 					}
 
-					if (registration.settings.lifeTime === ServiceLifetimes.Transient) {
+					if (registration.settings.lifeTime === Scopes.Transient) {
 						transients.push(resolved);
 
 						continue;
@@ -374,7 +379,7 @@ export class InjectionContainer {
 		// -- Step three - Retrieve step --
 
 		let instance: T;
-		if (registration.settings.lifeTime === ServiceLifetimes.Transient) {
+		if (registration.settings.lifeTime === Scopes.Transient) {
 			instance = transients[0].instance as T;
 		} else {
 			const newResolved = this.#dependencyScope.scanResolved(registration);
@@ -392,7 +397,7 @@ export class InjectionContainer {
 
 	private step_one_createNode<T>(registration: Registration<T>, parent: Registration<unknown> | null): NodeData {
 		let id = registration.token;
-		if (registration.settings.lifeTime === ServiceLifetimes.Transient) {
+		if (registration.settings.lifeTime === Scopes.Transient) {
 			id = Symbol('force new edge');
 		}
 
@@ -414,7 +419,7 @@ export class InjectionContainer {
 
 		for (const dep of lookupDependencies) {
 			let instance: unknown;
-			if (dep.settings.lifeTime === ServiceLifetimes.Transient) {
+			if (dep.settings.lifeTime === Scopes.Transient) {
 				const i = transients.findIndex((x) => x.token === dep.token);
 				if (i === -1) {
 					throw new Error('Could not find a transient instance');
