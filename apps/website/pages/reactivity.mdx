@@ -20,7 +20,7 @@ class Controller implements ControllerProtocol {
 }
 
 function Counter() {
-  const controller = useController(Controller);
+  const controller = useResolveLifecycle(Controller);
 
   return (
     <div>

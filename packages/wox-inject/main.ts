@@ -14,6 +14,7 @@ export { Injector } from './src/injector';
 export {
 	NewContainer,
 	ResolutionProvider,
+	useResolveLifecycle,
 	useController,
 	useResolve,
 	useDependency,
