@@ -1,6 +1,6 @@
 {
 	"name": "@wox-team/wox-inject",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Dependency injection for React",
 	"author": "wox team",
 	"license": "MIT",
@@ -17,8 +17,8 @@
 	],
 	"type": "module",
 	"sideEffects": false,
-	"main": "./dist/main.js",
-	"module": "./dist/main.mjs",
+	"main": "./dist/main.cjs",
+	"module": "./dist/main.js",
 	"types": "./dist/main.d.ts",
 	"files": [
 		"./dist/**"
