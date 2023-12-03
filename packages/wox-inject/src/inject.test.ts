@@ -178,7 +178,7 @@ test('Singleton instance, when being resolved multiple times in different branch
 	let resolvedTimes = 0;
 
 	@Injectable({
-		lifeTime: Scopes.Singleton,
+		scope: Scopes.Singleton,
 	})
 	class _1 {
 		value = Symbol(1);
@@ -190,7 +190,7 @@ test('Singleton instance, when being resolved multiple times in different branch
 	Injectable.naughtyReflection(_1, []);
 
 	@Injectable({
-		lifeTime: Scopes.Singleton,
+		scope: Scopes.Singleton,
 	})
 	class _2 {
 		value = Symbol(2);
@@ -202,7 +202,7 @@ test('Singleton instance, when being resolved multiple times in different branch
 	Injectable.naughtyReflection(_2, [_1]);
 
 	@Injectable({
-		lifeTime: Scopes.Singleton,
+		scope: Scopes.Singleton,
 	})
 	class _3 {
 		value = Symbol(3);
@@ -227,7 +227,7 @@ test('Scoped instance, when being resolved multiple times in different branches,
 	let resolvedTimes = 0;
 
 	@Injectable({
-		lifeTime: Scopes.Scoped,
+		scope: Scopes.Scoped,
 	})
 	class _1 {
 		value = Symbol(1);
@@ -239,7 +239,7 @@ test('Scoped instance, when being resolved multiple times in different branches,
 	Injectable.naughtyReflection(_1, []);
 
 	@Injectable({
-		lifeTime: Scopes.Scoped,
+		scope: Scopes.Scoped,
 	})
 	class _2 {
 		value = Symbol(2);
@@ -251,7 +251,7 @@ test('Scoped instance, when being resolved multiple times in different branches,
 	Injectable.naughtyReflection(_2, [_1]);
 
 	@Injectable({
-		lifeTime: Scopes.Singleton,
+		scope: Scopes.Singleton,
 	})
 	class _3 {
 		value = Symbol(3);
@@ -276,7 +276,7 @@ test('Scoped instance, when being resolved multiple times in different branches 
 	let resolvedTimes = 0;
 
 	@Injectable({
-		lifeTime: Scopes.Scoped,
+		scope: Scopes.Scoped,
 	})
 	class _1 {
 		value = Symbol(1);
@@ -288,7 +288,7 @@ test('Scoped instance, when being resolved multiple times in different branches 
 	Injectable.naughtyReflection(_1, []);
 
 	@Injectable({
-		lifeTime: Scopes.Scoped,
+		scope: Scopes.Scoped,
 	})
 	class _2 {
 		value = Symbol(2);
@@ -300,7 +300,7 @@ test('Scoped instance, when being resolved multiple times in different branches 
 	Injectable.naughtyReflection(_2, [_1]);
 
 	@Injectable({
-		lifeTime: Scopes.Singleton,
+		scope: Scopes.Singleton,
 	})
 	class _3 {
 		value = Symbol(3);
@@ -327,7 +327,7 @@ test('Transient instance, when being resolved multiple times in different branch
 	let resolvedTimes = 0;
 
 	@Injectable({
-		lifeTime: Scopes.Transient,
+		scope: Scopes.Transient,
 	})
 	class _1 {
 		value = Symbol(1);
@@ -339,7 +339,7 @@ test('Transient instance, when being resolved multiple times in different branch
 	Injectable.naughtyReflection(_1, []);
 
 	@Injectable({
-		lifeTime: Scopes.Transient,
+		scope: Scopes.Transient,
 	})
 	class _2 {
 		value = Symbol(2);
@@ -351,7 +351,7 @@ test('Transient instance, when being resolved multiple times in different branch
 	Injectable.naughtyReflection(_2, [_1]);
 
 	@Injectable({
-		lifeTime: Scopes.Transient,
+		scope: Scopes.Transient,
 	})
 	class _3 {
 		value = Symbol(3);

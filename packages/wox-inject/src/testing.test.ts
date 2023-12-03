@@ -8,14 +8,14 @@ beforeEach(() => {
 
 test('Singleton over-register, when developers register mock values for a token, it should retrieve the mock value', () => {
 	@Injectable({
-		lifeTime: Scopes.Singleton,
+		scope: Scopes.Singleton,
 	})
 	class Child {
 		data = 'should be replaced';
 	}
 
 	@Injectable({
-		lifeTime: Scopes.Singleton,
+		scope: Scopes.Singleton,
 	})
 	class Parent {
 		constructor(public readonly child: Child) {
@@ -39,14 +39,14 @@ test('Singleton over-register, when developers register mock values for a token,
 
 test('Scoped over-register, when developers register mock values for a token, it should retrieve the mock value', () => {
 	@Injectable({
-		lifeTime: Scopes.Scoped,
+		scope: Scopes.Scoped,
 	})
 	class Child {
 		data = 'should be replaced';
 	}
 
 	@Injectable({
-		lifeTime: Scopes.Scoped,
+		scope: Scopes.Scoped,
 	})
 	class Parent {
 		constructor(public readonly child: Child) {
@@ -70,14 +70,14 @@ test('Scoped over-register, when developers register mock values for a token, it
 
 test('Transient over-register, when developers register mock values for a token, it should retrieve the mock value', () => {
 	@Injectable({
-		lifeTime: Scopes.Transient,
+		scope: Scopes.Transient,
 	})
 	class Child {
 		data = 'should be replaced';
 	}
 
 	@Injectable({
-		lifeTime: Scopes.Transient,
+		scope: Scopes.Transient,
 	})
 	class Parent {
 		constructor(public readonly child: Child) {

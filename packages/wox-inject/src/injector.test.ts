@@ -19,7 +19,7 @@ test('Injector, when being resolved, should have stored a reference to the Resol
 
 test('Injector, when injector resolves a Singleton, should resolve from the referenced Resolution', () => {
 	@Injectable({
-		lifeTime: Scopes.Singleton,
+		scope: Scopes.Singleton,
 	})
 	class Dep {
 		constructor(public injector: Injector) {}
@@ -41,7 +41,7 @@ test('Injector, when injector resolves a Singleton, should resolve from the refe
 
 test('Injector, when injector resolves a Scoped, should resolve from the referenced Resolution', () => {
 	@Injectable({
-		lifeTime: Scopes.Scoped,
+		scope: Scopes.Scoped,
 	})
 	class Dep {
 		constructor(public injector: Injector) {}
@@ -63,7 +63,7 @@ test('Injector, when injector resolves a Scoped, should resolve from the referen
 
 test('Injector, when injector resolves a Transient, should resolve from the referenced Resolution', () => {
 	@Injectable({
-		lifeTime: Scopes.Transient,
+		scope: Scopes.Transient,
 	})
 	class Dep {
 		constructor(public injector: Injector) {}

@@ -28,7 +28,10 @@ export function setupScopedResolution() {
 	class _4 {
 		value = Symbol(4);
 
-		constructor(public readonly _2: _2, public readonly _3: _3) {
+		constructor(
+			public readonly _2: _2,
+			public readonly _3: _3,
+		) {
 			// Empty
 		}
 	}
@@ -43,14 +46,14 @@ export function setupScopedResolution() {
 
 export function setupSingletonResolution() {
 	@Injectable({
-		lifeTime: Scopes.Singleton,
+		scope: Scopes.Singleton,
 	})
 	class _1 {
 		value = Symbol(1);
 	}
 
 	@Injectable({
-		lifeTime: Scopes.Singleton,
+		scope: Scopes.Singleton,
 	})
 	class _2 {
 		value = Symbol(2);
@@ -61,7 +64,7 @@ export function setupSingletonResolution() {
 	}
 
 	@Injectable({
-		lifeTime: Scopes.Singleton,
+		scope: Scopes.Singleton,
 	})
 	class _3 {
 		value = Symbol(3);
@@ -72,12 +75,15 @@ export function setupSingletonResolution() {
 	}
 
 	@Injectable({
-		lifeTime: Scopes.Singleton,
+		scope: Scopes.Singleton,
 	})
 	class _4 {
 		value = Symbol(4);
 
-		constructor(public readonly _2: _2, public readonly _3: _3) {
+		constructor(
+			public readonly _2: _2,
+			public readonly _3: _3,
+		) {
 			// Empty
 		}
 	}
@@ -92,14 +98,14 @@ export function setupSingletonResolution() {
 
 export function setupTransientResolution() {
 	@Injectable({
-		lifeTime: Scopes.Transient,
+		scope: Scopes.Transient,
 	})
 	class _1 {
 		value = Symbol(1);
 	}
 
 	@Injectable({
-		lifeTime: Scopes.Transient,
+		scope: Scopes.Transient,
 	})
 	class _2 {
 		value = Symbol(2);
@@ -110,7 +116,7 @@ export function setupTransientResolution() {
 	}
 
 	@Injectable({
-		lifeTime: Scopes.Transient,
+		scope: Scopes.Transient,
 	})
 	class _3 {
 		value = Symbol(3);
@@ -121,12 +127,15 @@ export function setupTransientResolution() {
 	}
 
 	@Injectable({
-		lifeTime: Scopes.Transient,
+		scope: Scopes.Transient,
 	})
 	class _4 {
 		value = Symbol(4);
 
-		constructor(public readonly _2: _2, public readonly _3: _3) {
+		constructor(
+			public readonly _2: _2,
+			public readonly _3: _3,
+		) {
 			// Empty
 		}
 	}
