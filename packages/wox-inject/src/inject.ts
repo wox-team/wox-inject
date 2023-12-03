@@ -26,7 +26,7 @@ export enum Scopes {
 }
 
 interface RegistrationSettings {
-	readonly lifeTime: Scopes;
+	readonly scope: Scopes;
 }
 
 interface Registration<T> {
@@ -114,18 +114,28 @@ function INTERNAL_setCachedReflection<T extends Token<any>>(
 	return newCachedReflectionData;
 }
 
+interface InjectableSettings {
+	/**
+	 * @deprecated Use `scope` instead.
+	 */
+	readonly lifetime?: Scopes;
+	readonly scope?: Scopes;
+}
+
 /**
  * Returns a decorator that that marks a class as available to be provided and injected as a dependency.
  */
-export function Injectable(settings?: RegistrationSettings): GenericClassDecorator<Ctor<any>>;
+export function Injectable(settings?: InjectableSettings): GenericClassDecorator<Ctor<any>>;
 // @internal
-export function Injectable(settings?: RegistrationSettings, __fake__reflection?: Token<any>[]): GenericClassDecorator<Ctor<any>> {
+export function Injectable(settings?: InjectableSettings, __fake__reflection?: Token<any>[]): GenericClassDecorator<Ctor<any>> {
+	const scope = settings?.scope ?? settings?.lifetime ?? Scopes.Scoped;
+
 	return function decorate<T>(ctor: Ctor<T>) {
 		INTERNAL_register(
 			ctor,
 			ctor,
-			settings ?? {
-				lifeTime: Scopes.Scoped,
+			{
+				scope: scope,
 			},
 			__fake__reflection,
 		);
@@ -134,9 +144,9 @@ export function Injectable(settings?: RegistrationSettings, __fake__reflection?:
 
 export type LookupImpl = <T>(token: Token<T>) => T extends Ctor<any> ? ConcreteMappedSymbols<ConstructorParameters<T>> : Token[];
 
-export function register<T>(token: Token<any>, someValue: Ctor<T>, lifeTime?: Scopes): void {
+export function register<T>(token: Token<any>, someValue: Ctor<T>, scope?: Scopes): void {
 	INTERNAL_register(token, someValue, {
-		lifeTime: lifeTime ?? Scopes.Scoped,
+		scope: scope ?? Scopes.Scoped,
 	});
 }
 
@@ -223,11 +233,11 @@ export class Container {
 	}
 
 	public scanResolved<T>(registration: Registration<T>): Resolved<T> | null {
-		if (registration.settings.lifeTime === Scopes.Singleton) {
+		if (registration.settings.scope === Scopes.Singleton) {
 			return (this.singletons.find((x) => x.token === registration.token) as Resolved<T>) ?? null;
 		}
 
-		if (registration.settings.lifeTime === Scopes.Scoped) {
+		if (registration.settings.scope === Scopes.Scoped) {
 			return (
 				(this.scoped.find((x) => x.token === registration.token) as Resolved<T>) ??
 				this.inheritedScoped.find((x) => x.token === registration.token) ??
@@ -238,12 +248,12 @@ export class Container {
 		return null;
 	}
 
-	public addHotRegistration<T>(dependencyToken: Token<T>, value: any, lifetime?: Scopes): void {
+	public addHotRegistration<T>(dependencyToken: Token<T>, value: any, scope?: Scopes): void {
 		this.hotRegistrationRegister.push({
 			token: dependencyToken,
 			someValue: value as any,
 			settings: {
-				lifeTime: lifetime ?? Scopes.Unknown,
+				scope: scope ?? Scopes.Unknown,
 			},
 		});
 	}
@@ -348,25 +358,25 @@ export class Resolution {
 						} satisfies Resolved<unknown>;
 					}
 
-					if (registration.settings.lifeTime === Scopes.Singleton) {
+					if (registration.settings.scope === Scopes.Singleton) {
 						this.#container.singletons.push(resolved);
 
 						continue;
 					}
 
-					if (registration.settings.lifeTime === Scopes.Scoped) {
+					if (registration.settings.scope === Scopes.Scoped) {
 						this.#container.scoped.push(resolved);
 
 						continue;
 					}
 
-					if (registration.settings.lifeTime === Scopes.Transient) {
+					if (registration.settings.scope === Scopes.Transient) {
 						transients.push(resolved);
 
 						continue;
 					}
 
-					throw new Error('Unknown lifetime');
+					throw new Error('Unknown scope');
 				}
 			}
 		}
@@ -374,7 +384,7 @@ export class Resolution {
 		// -- Step three - Retrieve step --
 
 		let instance: T;
-		if (registration.settings.lifeTime === Scopes.Transient) {
+		if (registration.settings.scope === Scopes.Transient) {
 			instance = transients[0].instance as T;
 		} else {
 			const newResolved = this.#container.scanResolved(registration);
@@ -392,7 +402,7 @@ export class Resolution {
 
 	private step_one_createNode<T>(registration: Registration<T>, parent: Registration<unknown> | null): NodeData {
 		let id = registration.token;
-		if (registration.settings.lifeTime === Scopes.Transient) {
+		if (registration.settings.scope === Scopes.Transient) {
 			id = Symbol('force new edge');
 		}
 
@@ -414,7 +424,7 @@ export class Resolution {
 
 		for (const dep of lookupDependencies) {
 			let instance: unknown;
-			if (dep.settings.lifeTime === Scopes.Transient) {
+			if (dep.settings.scope === Scopes.Transient) {
 				const i = transients.findIndex((x) => x.token === dep.token);
 				if (i === -1) {
 					throw new Error('Could not find a transient instance');
