@@ -6,7 +6,7 @@ import { createContext, useContext, useLayoutEffect, useRef } from 'react';
 import { Container, Resolution } from './inject';
 import type { Token } from './inject';
 
-const ResolutionContext = createContext(new Resolution(new Container()));
+const GlobalResolutionContext = createContext(new Resolution(new Container()));
 
 interface NewContainerProps extends React.PropsWithChildren {
 	parentContainer?: Resolution;
@@ -32,15 +32,15 @@ interface NewContainerProps extends React.PropsWithChildren {
  * <ComponentWithDependencies />
  */
 export function NewContainer(props: NewContainerProps) {
-	const parentContainer = useContext(ResolutionContext);
+	const globalResolutionCtx = useContext(GlobalResolutionContext);
 	const container = useConstant(
 		() =>
 			new Resolution(
-				new Container(props.parentContainer?.linkScope() ?? parentContainer.linkScope(), props.useInheritanceLink ?? true),
+				new Container(props.parentContainer?.linkScope() ?? globalResolutionCtx.linkScope(), props.useInheritanceLink ?? true),
 			),
 	);
 
-	return <ResolutionContext.Provider value={container}>{props.children}</ResolutionContext.Provider>;
+	return <GlobalResolutionContext.Provider value={container}>{props.children}</GlobalResolutionContext.Provider>;
 }
 
 /**
@@ -59,8 +59,8 @@ export function NewContainer(props: NewContainerProps) {
  * }
  */
 export function useResolve<T>(dependencyToken: Token<T>): T {
-	const container = useContext(ResolutionContext);
-	const value = useConstant(() => container.resolve(dependencyToken));
+	const globalResolutionCtx = useContext(GlobalResolutionContext);
+	const value = useConstant(() => globalResolutionCtx.resolve(dependencyToken));
 
 	return value;
 }
@@ -95,10 +95,10 @@ export function useResolveLifecycle<T extends Lifecycle>(
 	...params: T['whenMount'] extends (...args: any) => any
 		? Parameters<T['whenMount']>
 		: T['whenUpdate'] extends (...args: any) => any
-		? Parameters<T['whenUpdate']>
-		: T['whenDemount'] extends (...args: any) => any
-		? Parameters<T['whenDemount']>
-		: never[]
+		  ? Parameters<T['whenUpdate']>
+		  : T['whenDemount'] extends (...args: any) => any
+		    ? Parameters<T['whenDemount']>
+		    : never[]
 ): T {
 	const instance = useResolve(dependencyToken);
 	const hasCalledMount = useRef(false);

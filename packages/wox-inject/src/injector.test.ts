@@ -9,12 +9,12 @@ test('Injector, when being resolved, should have stored a reference to the Resol
 	}
 	Injectable.naughtyReflection(Dep, [Injector]);
 
-	const scope = new Container();
-	const container = new Resolution(scope);
+	const container = new Container();
+	const resolution = new Resolution(container);
 
-	const dep = container.resolve(Dep);
+	const dep = resolution.resolve(Dep);
 
-	expect(dep.injector['currentResolution']).toBe(container);
+	expect(dep.injector['currentResolution']).toBe(resolution);
 });
 
 test('Injector, when injector resolves a Singleton, should resolve from the referenced Resolution', () => {
@@ -30,10 +30,10 @@ test('Injector, when injector resolves a Singleton, should resolve from the refe
 	}
 	Injectable.naughtyReflection(Dep, [Injector]);
 
-	const scope = new Container();
-	const container = new Resolution(scope);
+	const container = new Container();
+	const resolution = new Resolution(container);
 
-	const dep = container.resolve(Dep);
+	const dep = resolution.resolve(Dep);
 	const dep2 = dep.resolveFromInstance(Dep);
 
 	expect(dep).toBe(dep2);
@@ -52,10 +52,10 @@ test('Injector, when injector resolves a Scoped, should resolve from the referen
 	}
 	Injectable.naughtyReflection(Dep, [Injector]);
 
-	const scope = new Container();
-	const container = new Resolution(scope);
+	const container = new Container();
+	const resolution = new Resolution(container);
 
-	const dep = container.resolve(Dep);
+	const dep = resolution.resolve(Dep);
 	const dep2 = dep.resolveFromInstance(Dep);
 
 	expect(dep).toBe(dep2);
@@ -74,10 +74,10 @@ test('Injector, when injector resolves a Transient, should resolve from the refe
 	}
 	Injectable.naughtyReflection(Dep, [Injector]);
 
-	const scope = new Container();
-	const container = new Resolution(scope);
+	const container = new Container();
+	const resolution = new Resolution(container);
 
-	const dep = container.resolve(Dep);
+	const dep = resolution.resolve(Dep);
 	const dep2 = dep.resolveFromInstance(Dep);
 
 	expect(dep).not.toBe(dep2);
