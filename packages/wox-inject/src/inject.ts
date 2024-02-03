@@ -385,7 +385,7 @@ export class Resolution {
 
 		let instance: T;
 		if (registration.settings.scope === Scopes.Transient) {
-			instance = transients[0].instance as T;
+			instance = transients[transients.length - 1].instance as T;
 		} else {
 			const newResolved = this.#container.scanResolved(registration);
 			if (newResolved == null) {
