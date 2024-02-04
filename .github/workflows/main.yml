@@ -1,10 +1,8 @@
-name: Run tests pipeline
-
+name: CI
 on:
   push:
-    branches: [canary]
-  pull_request:
-    branches: [canary]
+    branches:
+      - "**"
 
 env:
   CI: true
@@ -55,3 +53,6 @@ jobs:
 
       - name: run tests
         run: pnpm test:ci
+
+      - name: run build
+        run: pnpm pnpm build
