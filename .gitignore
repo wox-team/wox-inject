@@ -21,6 +21,7 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 **/target
+.pnpm-store
 
 # Don't commit yarn or npm locks.
 .yarn.lock
