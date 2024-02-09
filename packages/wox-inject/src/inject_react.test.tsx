@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { Lifecycle, NewContainer, useResolveLifecycle, useResolve } from './inject_react';
 import { Injectable, clearRegistry, Scopes } from './inject';
 import { setupScopedResolution, setupSingletonResolution } from '../tests/setup_dependencies';
-import { useState } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import { createTestBed } from './testing';
 
 beforeEach(() => {
@@ -188,7 +188,7 @@ test('NewContainer, when passed a parent InjectContainer, should be able to deri
 	}
 	testBed.mockRegister(A, A, Scopes.Transient);
 
-	function Comp(): JSX.Element {
+	function Comp() {
 		const dep = useResolve(A);
 
 		return <span>{dep.value}</span>;
@@ -201,4 +201,51 @@ test('NewContainer, when passed a parent InjectContainer, should be able to deri
 	);
 
 	expect(screen.getByText('abc')).toBeInTheDocument();
+});
+
+test('', () => {
+	@Injectable()
+	class I {}
+	Injectable.naughtyReflection(I, []);
+
+	let i1: I | symbol = Symbol();
+	let i2: I | symbol = Symbol();
+	let i3: I | symbol = Symbol();
+
+	function Comp1({ children }: PropsWithChildren) {
+		const d = useResolve(I);
+
+		i1 = d;
+
+		return <NewContainer>{children}</NewContainer>;
+	}
+
+	function Comp2({ children }: PropsWithChildren) {
+		const d = useResolve(I);
+
+		i2 = d;
+
+		return <NewContainer>{children}</NewContainer>;
+	}
+
+	function Comp3({ children }: PropsWithChildren) {
+		const d = useResolve(I);
+
+		i3 = d;
+
+		return <NewContainer>{children}</NewContainer>;
+	}
+
+	render(
+		<Comp1>
+			<Comp2>
+				<Comp3 />
+			</Comp2>
+		</Comp1>,
+	);
+
+	expect(i1).toBe(i2);
+	expect(i2).toBe(i3);
+	expect(i3).toBe(i1);
+	expect(i3).toBe(i2);
 });

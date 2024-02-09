@@ -163,14 +163,14 @@ interface Resolved<T> {
  * The Container class has the responsibility is to hold onto all the resolved instances during runtime and providing easy to access
  */
 export class Container {
+	public readonly parentScope: (Container | Readonly<Container>) | null;
 	public readonly singletons: Resolved<unknown>[];
-	public readonly inheritedScoped: Resolved<unknown>[];
 	public readonly scoped: Resolved<unknown>[];
 	public hotRegistrationRegister: Registration<any>[];
 
-	constructor(parentScope?: Container, shouldInherit = true) {
+	constructor(parentScope?: Container | Readonly<Container>, shouldInherit = true) {
 		this.scoped = [];
-		this.inheritedScoped = shouldInherit ? parentScope?.scoped ?? [] : [];
+		this.parentScope = shouldInherit ? parentScope ?? null : null;
 		this.singletons = parentScope?.singletons ?? [];
 		this.hotRegistrationRegister = parentScope?.hotRegistrationRegister ?? [];
 	}
@@ -240,7 +240,7 @@ export class Container {
 		if (registration.settings.scope === Scopes.Scoped) {
 			return (
 				(this.scoped.find((x) => x.token === registration.token) as Resolved<T>) ??
-				this.inheritedScoped.find((x) => x.token === registration.token) ??
+				this.lookThroughInheritedScopesToFindResolved(registration) ??
 				null
 			);
 		}
@@ -260,6 +260,21 @@ export class Container {
 
 	public clearHotRegistration(): void {
 		this.hotRegistrationRegister = [];
+	}
+
+	private lookThroughInheritedScopesToFindResolved<T>(registration: Registration<T>): Resolved<T> | null {
+		let parent = this.parentScope;
+
+		while (parent != null) {
+			const resolved = parent.scoped.find((x) => x.token === registration.token) as Resolved<T>;
+			if (resolved) {
+				return resolved;
+			}
+
+			parent = parent.parentScope;
+		}
+
+		return null;
 	}
 }
 
