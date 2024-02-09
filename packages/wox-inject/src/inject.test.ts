@@ -371,3 +371,27 @@ test('Transient instance, when being resolved multiple times in different branch
 
 	expect(resolvedTimes).toBe(6);
 });
+
+test("Scope instances, when being resolved through nestled containers, should be able to derive instance wherever it's resolved", () => {
+	@Injectable()
+	class I {}
+
+	Injectable.naughtyReflection(I, []);
+
+	const c1 = new Container();
+	const c2 = new Container(c1);
+	const c3 = new Container(c2);
+
+	const r1 = new Resolution(c1);
+	const r2 = new Resolution(c2);
+	const r3 = new Resolution(c3);
+
+	const i1 = r1.resolve(I);
+	const i2 = r2.resolve(I);
+	const i3 = r3.resolve(I);
+
+	expect(i1).toBe(i2);
+	expect(i2).toBe(i3);
+	expect(i3).toBe(i1);
+	expect(i3).toBe(i2);
+});
