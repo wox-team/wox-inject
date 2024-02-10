@@ -203,7 +203,7 @@ test('NewContainer, when passed a parent InjectContainer, should be able to deri
 	expect(screen.getByText('abc')).toBeInTheDocument();
 });
 
-test('', () => {
+test("NewContainer, when nestled, should be able to derive instance wherever it's resolved", () => {
 	@Injectable()
 	class I {}
 	Injectable.naughtyReflection(I, []);
