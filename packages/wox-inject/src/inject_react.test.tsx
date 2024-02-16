@@ -25,7 +25,37 @@ test('useDependency, when used in a React component, should return expected clas
 	expect(screen.getByText('4')).toBeInTheDocument();
 });
 
-test('NewContainer, when rendered with useInheritanceLink -> false, should create a new instances for scoped dependencies', () => {
+test('NewContainer, when rendered with shouldInheritScopes -> false, should create a new instances for scoped dependencies', () => {
+	const deps = setupScopedResolution();
+
+	function Comp_1() {
+		const dep = useResolve(deps[4]);
+
+		dep.value = Symbol('mutated from comp 1');
+
+		return (
+			<>
+				<span>{dep.value.description}</span>
+
+				<NewContainer shouldInheritScopes={false}>
+					<Comp_2 />
+				</NewContainer>
+			</>
+		);
+	}
+
+	function Comp_2() {
+		const dep = useResolve(deps[4]);
+
+		return <span>{dep.value.description}</span>;
+	}
+
+	render(<Comp_1 />);
+
+	expect(screen.getByText('4')).toBeInTheDocument();
+});
+
+test('(Legacy) NewContainer, when rendered with useInheritanceLink -> false, should create a new instances for scoped dependencies', () => {
 	const deps = setupScopedResolution();
 
 	function Comp_1() {
@@ -148,39 +178,86 @@ test('experience for new library user, when copying example from the readme, sho
 	expect(screen.getByText('hello there!')).toBeInTheDocument();
 });
 
-test('useResolveLifecycle, when used in a React component, should return expected class instance', () => {
+test('useResolveLifecycle, when used in a React component, should invoke expected lifecycle methods', () => {
 	const whenMount = vi.fn<[_arg_one: string]>();
 	const whenUpdate = vi.fn<[_arg_one: string]>();
 	const whenDemount = vi.fn<[_arg_one: string]>();
+	const whenRepeatedlyMount = vi.fn<[_arg_one: string]>();
 
 	@Injectable()
 	class C implements Lifecycle {
+		whenRepeatedlyMount = whenRepeatedlyMount;
 		whenMount = whenMount;
 		whenUpdate = whenUpdate;
 		whenDemount = whenDemount;
 	}
 
-	function Comp({ arg_one }: { arg_one?: string }) {
-		useResolveLifecycle(C, arg_one ?? 'A');
+	function Comp(props: PropsWithChildren<{ arg_one?: string }>) {
+		useResolveLifecycle(C, props.arg_one ?? 'A');
 
-		return null;
+		return <>{props.children}</>;
 	}
 
-	const result = render(<Comp />);
-	result.rerender(<Comp arg_one='B' />);
-	result.rerender(<Comp arg_one='C' />);
+	const Parent = Comp;
+	const Child = Comp;
+
+	const result = render(
+		<Parent>
+			<Child />
+		</Parent>,
+	);
+	result.rerender(
+		<Parent arg_one='B'>
+			<Child arg_one='C' />
+		</Parent>,
+	);
+	result.rerender(
+		<Parent arg_one='D'>
+			<Child arg_one='E' />
+		</Parent>,
+	);
 	result.unmount();
 
 	expect(whenMount).toHaveBeenCalledOnce();
 	expect(whenMount).toHaveBeenCalledWith('A');
-	expect(whenUpdate).toHaveBeenCalledTimes(2);
-	expect(whenUpdate).toHaveBeenNthCalledWith(1, 'B');
-	expect(whenUpdate).toHaveBeenNthCalledWith(2, 'C');
-	expect(whenDemount).toHaveBeenCalledOnce();
-	expect(whenDemount).toHaveBeenCalledWith('C');
+
+	expect(whenRepeatedlyMount).toHaveBeenCalledOnce();
+
+	expect(whenUpdate).toHaveBeenCalledTimes(4);
+	expect(whenUpdate).toHaveBeenNthCalledWith(1, 'C');
+	expect(whenUpdate).toHaveBeenNthCalledWith(2, 'B');
+	expect(whenUpdate).toHaveBeenNthCalledWith(3, 'E');
+	expect(whenUpdate).toHaveBeenNthCalledWith(4, 'D');
+
+	expect(whenDemount).toHaveBeenCalledTimes(2);
+	expect(whenDemount).toHaveBeenNthCalledWith(1, 'D');
+	expect(whenDemount).toHaveBeenNthCalledWith(2, 'E');
 });
 
-test('NewContainer, when passed a parent InjectContainer, should be able to derive instances from it', () => {
+test('NewContainer, when passed a Container, should inherit instances from it', () => {
+	const testBed = createTestBed();
+
+	class A {
+		value = 'abc';
+	}
+	testBed.mockRegister(A, A, Scopes.Transient);
+
+	function Comp() {
+		const dep = useResolve(A);
+
+		return <span>{dep.value}</span>;
+	}
+
+	render(
+		<NewContainer inheritFrom={testBed.container}>
+			<Comp />
+		</NewContainer>,
+	);
+
+	expect(screen.getByText('abc')).toBeInTheDocument();
+});
+
+test('(legacy) NewContainer, when passed a Resolution, should inherit instances from it', () => {
 	const testBed = createTestBed();
 
 	class A {
