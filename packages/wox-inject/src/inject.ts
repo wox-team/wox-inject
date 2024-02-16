@@ -163,12 +163,17 @@ interface Resolved<T> {
  * The Container class has the responsibility is to hold onto all the resolved instances during runtime and providing easy to access
  */
 export class Container {
-	public readonly parentScope: (Container | Readonly<Container>) | null;
-	public readonly singletons: Resolved<unknown>[];
-	public readonly scoped: Resolved<unknown>[];
+	private static instanceCounter = 0;
+	public readonly id: number;
+
+	public singletons: Resolved<unknown>[];
+	public scoped: Resolved<unknown>[];
+	public parentScope: (Container | Readonly<Container>) | null;
 	public hotRegistrationRegister: Registration<any>[];
 
 	constructor(parentScope?: Container | Readonly<Container>, shouldInherit = true) {
+		this.id = Container.instanceCounter++;
+
 		this.scoped = [];
 		this.parentScope = shouldInherit ? parentScope ?? null : null;
 		this.singletons = parentScope?.singletons ?? [];
@@ -258,8 +263,47 @@ export class Container {
 		});
 	}
 
+	/**
+	 * **NOTE**
+	 * Don't use this in application code. Mocks are for testing only, expect lot of side effects if used in application code.
+	 */
 	public clearHotRegistration(): void {
 		this.hotRegistrationRegister = [];
+	}
+
+	/**
+	 * **NOTE**
+	 * Don't use this in application code. It's for specifically running certain tests, expect lot of side effects.
+	 */
+	public clearSingletons(): void {
+		this.singletons = [];
+	}
+
+	/**
+	 * **NOTE**
+	 * Don't use this in application code. It's for specifically running certain tests, expect lot of side effects.
+	 */
+	public clearScoped(): void {
+		this.scoped = [];
+	}
+
+	/**
+	 * **NOTE**
+	 * Don't use this in application code. It's for specifically running certain tests, expect lot of side effects.
+	 */
+	public clearInheritedScoped(): void {
+		this.parentScope = null;
+	}
+
+	/**
+	 * **NOTE**
+	 * Don't use this in application code. It's for specifically running certain tests, expect lot of side effects.
+	 */
+	public clearAll(): void {
+		this.clearSingletons();
+		this.clearScoped();
+		this.clearInheritedScoped();
+		this.clearHotRegistration();
 	}
 
 	private lookThroughInheritedScopesToFindResolved<T>(registration: Registration<T>): Resolved<T> | null {
@@ -282,16 +326,12 @@ export class Resolution {
 	private static instanceCounter = 0;
 
 	public readonly id: number;
-	readonly #container: Container;
+	public readonly container: Container;
 
 	constructor(container: Readonly<Container>) {
 		this.id = Resolution.instanceCounter++;
 
-		this.#container = container as Container;
-	}
-
-	public linkScope(): Readonly<Container> {
-		return this.#container;
+		this.container = container as Container;
 	}
 
 	public resolve<T>(dependencyToken: Token<T>): T {
@@ -299,7 +339,7 @@ export class Resolution {
 		currentResolution = this;
 
 		// If the token, for this depth, has already been resolved. Return it.
-		const [resolved, registration] = this.#container.getPotentialResolvedDependency(dependencyToken);
+		const [resolved, registration] = this.container.getPotentialResolvedDependency(dependencyToken);
 		if (resolved != null) return resolved;
 
 		const dependenciesForEachDependency = new Map<Token, Registration<unknown>[]>();
@@ -324,7 +364,7 @@ export class Resolution {
 			dependencyGraph.lookupOrInsertNode(node);
 
 			const dependencies = INTERNAL_getCachedReflection(node.registration.token);
-			const registrations = dependencies.map((dependency) => this.#container.scanRegistrationStrict(dependency));
+			const registrations = dependencies.map((dependency) => this.container.scanRegistrationStrict(dependency));
 
 			for (const registration of registrations) {
 				if (registration == null) throw new Error('A dependency was not registered.');
@@ -362,7 +402,7 @@ export class Resolution {
 				if (typeof token === 'symbol') {
 					todo('Non ctor injection');
 				} else {
-					let resolved = registration ? this.#container.scanResolved(registration) : null;
+					let resolved = registration ? this.container.scanResolved(registration) : null;
 					if (resolved == null) {
 						const args = this.step_two_retrieveArgs(token, dependenciesForEachDependency, transients);
 						const instance = new /* As Ctor */ (factory as any)(...args);
@@ -374,13 +414,13 @@ export class Resolution {
 					}
 
 					if (registration.settings.scope === Scopes.Singleton) {
-						this.#container.singletons.push(resolved);
+						this.container.singletons.push(resolved);
 
 						continue;
 					}
 
 					if (registration.settings.scope === Scopes.Scoped) {
-						this.#container.scoped.push(resolved);
+						this.container.scoped.push(resolved);
 
 						continue;
 					}
@@ -402,7 +442,7 @@ export class Resolution {
 		if (registration.settings.scope === Scopes.Transient) {
 			instance = transients[transients.length - 1].instance as T;
 		} else {
-			const newResolved = this.#container.scanResolved(registration);
+			const newResolved = this.container.scanResolved(registration);
 			if (newResolved == null) {
 				todo('Cannot get the complete resolution');
 			}
@@ -448,7 +488,7 @@ export class Resolution {
 				instance = transients[i].instance;
 				transients.splice(i, 1);
 			} else {
-				const resolved = this.#container.scanResolved(dep);
+				const resolved = this.container.scanResolved(dep);
 				if (resolved == null) {
 					todo('Failed to a resolved dep');
 				}

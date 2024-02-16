@@ -9,7 +9,26 @@ import type { Token } from './inject';
 const GlobalResolutionContext = createContext(new Resolution(new Container()));
 
 interface NewContainerProps extends React.PropsWithChildren {
+	/**
+	 * If provided, Singletons and Scoped instances from this container will be inherited by the new container.
+	 */
+	inheritFrom?: Container;
+
+	/**
+	 * Whether the new container should inherit the parent container's Scoped instances.
+	 */
+	shouldInheritScopes?: boolean;
+
+	/**
+	 * @deprecated
+	 * Use `inheritContainer` instead.
+	 */
 	parentContainer?: Resolution;
+
+	/**
+	 * @deprecated
+	 * Use `shouldInheritScopes` instead.
+	 */
 	useInheritanceLink?: boolean;
 }
 
@@ -32,11 +51,29 @@ interface NewContainerProps extends React.PropsWithChildren {
  * <ComponentWithDependencies />
  */
 export function NewContainer(props: NewContainerProps) {
+	let backwards_compatible__inheritFrom: Readonly<Container> | null;
+	if (props.parentContainer != null) {
+		backwards_compatible__inheritFrom = props.parentContainer.container;
+	} else if (props.inheritFrom != null) {
+		backwards_compatible__inheritFrom = props.inheritFrom;
+	} else {
+		backwards_compatible__inheritFrom = null;
+	}
+
+	let backwards_compatible__useInheritanceLink: boolean;
+	if (props.useInheritanceLink != null) {
+		backwards_compatible__useInheritanceLink = props.useInheritanceLink;
+	} else if (props.shouldInheritScopes != null) {
+		backwards_compatible__useInheritanceLink = props.shouldInheritScopes;
+	} else {
+		backwards_compatible__useInheritanceLink = true;
+	}
+
 	const globalResolutionCtx = useContext(GlobalResolutionContext);
 	const container = useConstant(
 		() =>
 			new Resolution(
-				new Container(props.parentContainer?.linkScope() ?? globalResolutionCtx.linkScope(), props.useInheritanceLink ?? true),
+				new Container(backwards_compatible__inheritFrom ?? globalResolutionCtx.container, backwards_compatible__useInheritanceLink),
 			),
 	);
 
@@ -67,6 +104,7 @@ export function useResolve<T>(dependencyToken: Token<T>): T {
 
 export interface Lifecycle<T extends any[] = any[]> {
 	whenMount?(...args: T): any;
+	whenRepeatedlyMount?(...args: T): any;
 	whenUpdate?(...args: T): any;
 	whenDemount?(...args: T): any;
 }
@@ -98,9 +136,21 @@ export function useResolveLifecycle<T extends Lifecycle>(
 		  ? Parameters<T['whenUpdate']>
 		  : T['whenDemount'] extends (...args: any) => any
 		    ? Parameters<T['whenDemount']>
-		    : never[]
+		    : T['whenRepeatedlyMount'] extends (...args: any) => any
+		      ? Parameters<T['whenRepeatedlyMount']>
+		      : never[]
 ): T {
-	const instance = useResolve(dependencyToken);
+	const globalResolutionCtx = useContext(GlobalResolutionContext);
+	const hasBeenResolved = useConstant(() => {
+		const container = globalResolutionCtx.container;
+		const registration = container.scanRegistration(dependencyToken);
+		if (registration == null) return false;
+
+		const instance = container.scanResolved(registration);
+		return instance != null;
+	});
+	const instance = useConstant(() => globalResolutionCtx.resolve(dependencyToken));
+
 	const hasCalledMount = useRef(false);
 	const latestParams = useRef(params);
 
@@ -114,7 +164,12 @@ export function useResolveLifecycle<T extends Lifecycle>(
 			}
 
 			hasCalledMount.current = true;
-			boxFn(instance.whenMount?.bind(instance), params);
+
+			if (hasBeenResolved) {
+				boxFn(instance.whenRepeatedlyMount?.bind(instance), params);
+			} else {
+				boxFn(instance.whenMount?.bind(instance), params);
+			}
 		},
 		[instance, params],
 	);
