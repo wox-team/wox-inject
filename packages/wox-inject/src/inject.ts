@@ -25,6 +25,8 @@ export enum Scopes {
 	Unknown,
 }
 
+export type ScopesLoose = 'singleton' | 'transient' | 'scoped';
+
 interface RegistrationSettings {
 	readonly scope: Scopes;
 }
@@ -114,13 +116,18 @@ function INTERNAL_setCachedReflection<T extends Token<any>>(
 	return newCachedReflectionData;
 }
 
-interface InjectableSettings {
+interface InjectableSettingsStrict {
 	/**
 	 * @deprecated Use `scope` instead.
 	 */
 	readonly lifetime?: Scopes;
 	readonly scope?: Scopes;
 }
+interface InjectableSettingsLoose {
+	readonly scope?: ScopesLoose;
+}
+
+type InjectableSettings = InjectableSettingsStrict | InjectableSettingsLoose;
 
 /**
  * Returns a decorator that that marks a class as available to be provided and injected as a dependency.
@@ -128,7 +135,7 @@ interface InjectableSettings {
 export function Injectable(settings?: InjectableSettings): GenericClassDecorator<Ctor<any>>;
 // @internal
 export function Injectable(settings?: InjectableSettings, __fake__reflection?: Token<any>[]): GenericClassDecorator<Ctor<any>> {
-	const scope = settings?.scope ?? settings?.lifetime ?? Scopes.Scoped;
+	const scope = unwrapScope(settings);
 
 	return function decorate<T>(ctor: Ctor<T>) {
 		INTERNAL_register(
@@ -140,6 +147,29 @@ export function Injectable(settings?: InjectableSettings, __fake__reflection?: T
 			__fake__reflection,
 		);
 	};
+}
+
+function unwrapScope(unknownScope?: InjectableSettings): Scopes {
+	if (unknownScope == null) return Scopes.Scoped;
+
+	if (typeof unknownScope.scope === 'string') {
+		switch (unknownScope.scope) {
+			case 'singleton':
+				return Scopes.Singleton;
+			case 'transient':
+				return Scopes.Transient;
+			case 'scoped':
+				return Scopes.Scoped;
+			default:
+				return Scopes.Unknown;
+		}
+	}
+
+	if ('lifetime' in unknownScope) {
+		return unknownScope.lifetime ?? Scopes.Scoped;
+	}
+
+	return unknownScope.scope ?? Scopes.Scoped;
 }
 
 export type LookupImpl = <T>(token: Token<T>) => T extends Ctor<any> ? ConcreteMappedSymbols<ConstructorParameters<T>> : Token[];

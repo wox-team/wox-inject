@@ -395,3 +395,152 @@ test("Scope instances, when being resolved through nestled containers, should be
 	expect(i3).toBe(i1);
 	expect(i3).toBe(i2);
 });
+
+test('Singleton instance, when being resolved using str, should apply Singleton rules', () => {
+	let resolvedTimes = 0;
+
+	@Injectable({
+		scope: 'singleton',
+	})
+	class _1 {
+		value = Symbol(1);
+
+		constructor() {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_1, []);
+
+	@Injectable({
+		scope: 'singleton',
+	})
+	class _2 {
+		value = Symbol(2);
+
+		constructor(public readonly _1: _1) {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_2, [_1]);
+
+	@Injectable({
+		scope: 'singleton',
+	})
+	class _3 {
+		value = Symbol(3);
+
+		constructor(public readonly _2: _2) {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_3, [_2]);
+
+	const scope = new Container();
+	const container_1 = new Resolution(scope);
+
+	container_1.resolve(_1);
+	container_1.resolve(_2);
+	container_1.resolve(_3);
+
+	expect(resolvedTimes).toBe(3);
+});
+
+test('Scoped instance, when being resolved using str, should apply Scoped rules', () => {
+	let resolvedTimes = 0;
+
+	@Injectable({
+		scope: 'scoped',
+	})
+	class _1 {
+		value = Symbol(1);
+
+		constructor() {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_1, []);
+
+	@Injectable({
+		scope: 'scoped',
+	})
+	class _2 {
+		value = Symbol(2);
+
+		constructor(public readonly _1: _1) {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_2, [_1]);
+
+	@Injectable({
+		scope: 'singleton',
+	})
+	class _3 {
+		value = Symbol(3);
+
+		constructor(public readonly _2: _2) {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_3, [_2]);
+
+	const scope = new Container();
+	const container_1 = new Resolution(scope);
+
+	const container_2 = new Resolution(scope);
+
+	container_1.resolve(_1);
+	container_1.resolve(_2);
+	container_2.resolve(_3);
+
+	expect(resolvedTimes).toBe(3);
+});
+
+test('Transient instance, when being resolved using str, should apply Transient rules', () => {
+	let resolvedTimes = 0;
+
+	@Injectable({
+		scope: 'transient',
+	})
+	class _1 {
+		value = Symbol(1);
+
+		constructor() {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_1, []);
+
+	@Injectable({
+		scope: 'transient',
+	})
+	class _2 {
+		value = Symbol(2);
+
+		constructor(public readonly _1: _1) {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_2, [_1]);
+
+	@Injectable({
+		scope: 'transient',
+	})
+	class _3 {
+		value = Symbol(3);
+
+		constructor(public readonly _2: _2) {
+			++resolvedTimes;
+		}
+	}
+	Injectable.naughtyReflection(_3, [_2]);
+
+	const scope = new Container();
+	const container_1 = new Resolution(scope);
+
+	container_1.resolve(_1);
+	container_1.resolve(_2);
+	container_1.resolve(_3);
+
+	expect(resolvedTimes).toBe(6);
+});
