@@ -1,11 +1,5 @@
-> **Warning**
-> This library is not production ready yet.
-> 
-<br />
-<br />
-
 <div align="center">
-  <img width="100px" src="https://github.com/wox-team/wox-inject/assets/8842821/d994610c-d755-437f-9ab8-6e705f50d4b2" />
+  <img width="100px" src="https://github.com/wox-team/wox-inject/assets/8842821/5323b472-15c9-4d2a-90b4-81e7663ebba1" />
 </div>
 
 <h1 align="center">wox inject</h1>
@@ -29,43 +23,30 @@
 <br />
 <br />
 
-wox inject primary empowers React apps with a versatile dependency injection library, promoting an alternative paradigm to handle complexity.
+Wox Inject empowers React apps with a versatile dependency injection library, promoting an alternative paradigm to handle complexity.
 
 ```tsx
+import { Injectable } from '@wox-team/wox-inject';
+
 @Injectable()
-class FooService {
-  greet(msg: string) {
-    console.log(`hello ${msg}!`);
+class GreeterService {
+  greet(val: string) {
+    console.log(val);
   }
 }
 
 function App() {
-  const fooService = useResolve(FooService);
+  const greeterService = useResolve(GreeterService);
 
   return (
-    <button onClick={() => {
-      fooService.greet('there!');
-    }}>
-      click me
-    </button>
+    <button onClick={() => greeterService.greet('hello!')}>click me</button>
   );
 }
 ```
 
-## Installation
+## Getting Started
 
-Install `@wox-team/wox-inject` in your project with your package manager of choice:
-```bash
-npm install @wox-team/wox-inject
-```
-
-```bash
-yarn add @wox-team/wox-inject
-```
-
-```bash
-pnpm add @wox-team/wox-inject
-```
+Visit [wox.so](https://wox.so) to get started with Wox Inject.
 
 <br />
 
@@ -80,7 +61,6 @@ Right now the focus is to provide stability for SPA usage. SSR will be on the ro
 Want to contribute to wox inject? Our [contributing guide](https://github.com/wox-team/wox-inject/blob/canary/.github/CONTRIBUTING.md) has you covered.
 
 <br />
-
 <br />
 <br />
 <br />
