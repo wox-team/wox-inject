@@ -1,7 +1,23 @@
 {
-	"index": "Introduction",
-	"react": "React",
-	"reactivity": "Reactivity",
-	"vite": "vite",
-	"testing": "Testing"
+	"index": {
+		"title": "Getting Started",
+		"theme": {
+			"breadcrumb": false
+		}
+	},
+	"scopes": {
+		"title": "Scopes"
+	},
+	"react": {
+		"display": "hidden"
+	},
+	"reactivity": {
+		"title": "Reactivity"
+	},
+	"vite": {
+		"display": "hidden"
+	},
+	"testing": {
+		"display": "hidden"
+	}
 }

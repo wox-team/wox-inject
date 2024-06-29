@@ -1,13 +1,205 @@
-import { Callout } from 'nextra/components'
+---
+title: Wox Inject – React Dependency Injection
+---
 
-# Introduction
+import { Callout, Tabs, Cards, Card } from 'nextra/components';
+import Image from 'next/image';
 
-Welcome to the wox documentation!
+<Image src='/hero.png' alt='wox' width={832} height={400} />
 
-## What is wox?
+<p class="text-lg mt-4">An open-source library that enables dependency injection in React applications.</p>
 
-wox is a dependency injection framework for React.
+## Getting Started
+A quick tutorial to get you up and running with Wox Inject.
 
-<Callout emoji="ℹ️">
-	More info will be added soon.
+<Callout emoji="⚠️">
+	Before continuing do note that Wox Inject __only__ works with __[Vite](https://vitejs.dev/)__ right now. We are working on adding support for other build tools.
 </Callout>
+
+### Installation
+Install the Wox Inject library using your favorite package manager.
+
+<Tabs items={['pnpm', 'npm', 'yarn']}>
+  <Tabs.Tab>
+    ```bash
+    pnpm add @wox-team/wox-inject
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    ```bash
+    npm install @wox-team/wox-inject
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    ```bash
+    yarn add @wox-team/wox-inject
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+
+### Usage
+Once installed you can start using Wox Inject in your React application.
+
+```tsx
+import { Injectable } from '@wox-team/wox-inject';
+
+@Injectable()
+class GreeterService {
+  greet(val: string) {
+    console.log(val);
+  }
+}
+
+function App() {
+  const greeterService = useResolve(GreeterService);
+
+  return (
+    <button onClick={() => greeterService.greet('hello!')}>click me</button>
+  );
+}
+```
+
+The basic example above isn't very useful, but it demonstrates how to use Wox Inject in your application in a foundational way.
+
+Let's jump into some more advanced topics and why you're using this!
+
+#### Decorators
+In Wox Inject the `@Injectable` decorator is used to define a class as a dependency to be resolved. The `useResolve` hook is used to resolve the service in a component.
+
+```tsx
+@Injectable()
+class GreeterService {
+  greet(val: string) {
+    console.log(val);
+  }
+}
+
+@Injectable()
+class Controller {
+  constructor(private greeterService: GreeterService) {}
+
+  sayHello() {
+    this.greeterService.greet('hello!');
+  }
+}
+```
+
+#### Reflection
+At this step, trying to resolve `Controller` will result in an error.
+```tsx
+const controller = useResolve(Controller);
+controller.sayHello() // TypeError: undefined is not an object (evaluating 'this.greeterService.greet')
+```
+
+This is because no code reflection has been done yet. What is code reflection?
+
+Code reflection allows a program to examine and modify its own structure at runtime. TypeScript lacks built-in reflection, so developers often use `reflect-metadata` to attach and inspect metadata on classes and methods at runtime.
+
+While that route would work for build tools that bundle the code through TypeScript, it'll not work for build tools that strips out type annontations like Vite.
+
+To fix this, you'll need to add the `@wox-team/wox-inject-vite` plugin to your Vite configuration. It'll not work like traditional reflection that operates at runtime, but the plugin will generate metadata at build time.
+
+To install the plugin, use your favorite package manager.
+
+<Tabs items={['pnpm', 'npm', 'yarn']}>
+  <Tabs.Tab>
+    ```bash
+    pnpm add @wox-team/wox-inject-vite -D
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    ```bash
+    npm install @wox-team/wox-inject-vite -D
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    ```bash
+    yarn add @wox-team/wox-inject-vite -D
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+Once installed, add the plugin to your Vite configuration.
+
+```tsx
+import { defineConfig } from 'vite';
+import { dependencyInjection } from '@wox-team/wox-inject-vite';
+
+export default defineConfig({
+  // ...
+  plugins: [
+    // ...
+    dependencyInjection(),
+  ],
+});
+```
+
+You will also need to add the `decorators-legacy` plugin to the Babel configuration in the react plugin.
+
+```tsx
+// ...
+plugins: [
+  react({
+    babel: {
+      parserOpts: {
+        plugins: ['decorators-legacy'],
+      },
+    },
+  }),
+  dependencyInjection(),
+],
+// ...
+```
+
+Now you can run your application and the dependency injection will work as expected.
+
+```tsx
+const controller = useResolve(Controller);
+controller.sayHello() // hello!
+```
+
+Happy building!
+
+
+#### Quick Links
+
+<Cards>
+  <Card title="Scopes" href="/scopes" />
+</Cards>
+
+<br />
+<br />
+
+<Image src='/illustration.png' alt='illustration' width={832} height={400} />
+
+## FAQ
+
+The FAQ is a collection of useful questions and answers about the
+library. If you have a question that isn't answered here, please [open an issue](ttps://github.com/wox-team/wox-inject/discussions).
+
+export function FAQBox(props) {
+  return (
+    <details
+      open
+      className="last-of-type:mb-0 rounded-lg bg-neutral-50 dark:bg-neutral-800 p-2 mt-4"
+    >
+      <summary>
+        <strong className="text-lg">{props.title}</strong>
+      </summary>
+      <div className="nx-p-2">{props.children}</div>
+    </details>
+  )
+}
+
+<FAQBox title="Is Wox Inject a state managment package?">
+  No, Wox Inject have more in common with React's Context API than with state management libraries. Wox Inject allows a composition of logic to be shared across components.
+</FAQBox>
+
+<FAQBox title="Can I use Wox Inject without TypeScript">
+  While it's technically possible to use Wox Inject without TypeScript. It's not at all recommended. Wox Inject is designed to work with TypeScript and you'll have a much better experience using it with TypeScript.
+</FAQBox>
+
+<FAQBox title="Can I use Wox Inject with Next.js?">
+  No, not right now. Wox Inject is designed to work with React but currently we only support Vite as a build tool.
+</FAQBox>
