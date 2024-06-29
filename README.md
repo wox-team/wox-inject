@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="100px" src="https://github.com/wox-team/wox-inject/assets/8842821/5323b472-15c9-4d2a-90b4-81e7663ebba1" />
+  <img width="100%" src="https://github.com/wox-team/wox-inject/assets/8842821/5323b472-15c9-4d2a-90b4-81e7663ebba1" />
 </div>
 
 <h3 align="center">
