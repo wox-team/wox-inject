@@ -2,7 +2,6 @@
   <img width="100px" src="https://github.com/wox-team/wox-inject/assets/8842821/5323b472-15c9-4d2a-90b4-81e7663ebba1" />
 </div>
 
-<h1 align="center">wox inject</h1>
 <h3 align="center">
   An open source Dependency Injection library.
 </h3>
@@ -39,7 +38,7 @@ function App() {
   const greeterService = useResolve(GreeterService);
 
   return (
-    <button onClick={() => greeterService.greet('hello!')}>click me</button>
+    <button type="button" onClick={() => greeterService.greet('hello!')}>click me</button>
   );
 }
 ```
