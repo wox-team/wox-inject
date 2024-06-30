@@ -2,11 +2,12 @@
 title: Wox Inject – Reactivity
 ---
 
-# Wox Inject is not state management
+# Wox Inject is not state management (yet)
 
-Reactive bindings are currently not part of the library. Wox Inject behaves more similar to the React context API than to any other state manager. It only allows you to drive your application logic sepperated from your view logic and intertwin them in a very controlled way.
+Reactive bindings are currently not part of the library. Right now Wox Inject behaves more similar to the React context API than to any other state manager. It only allows you to drive your application logic sepperated from your view logic and intertwin them in a very controlled way. But it doesn't provide any reactivity out of the box.
 
-If you want to include reactivity in your application we recommend using [Preact signals](https://preactjs.com/guide/v10/signals/). It works surprisingly very well with Wox Inject.
+We recommend using [Preact signals](https://preactjs.com/guide/v10/signals/) to act as glue for this missing feature. It works suprisingly well with Wox Inject.
+
 > Signals are reactive primitives for managing application state.
 
 ```tsx
@@ -30,7 +31,7 @@ function Counter() {
     <div>
       <p>Count: {double.counterState}</p>
       <p>Double: {double.viewModel}</p>
-      <button onClick={() => controller.incriment()}>click me</button>
+      <button type="button" onClick={() => controller.incriment()}>click me</button>
     </div>
   );
 }

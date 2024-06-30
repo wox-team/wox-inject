@@ -6,18 +6,30 @@
 		}
 	},
 	"scopes": {
-		"title": "Scopes"
+		"title": "Scopes",
+		"theme": {
+			"breadcrumb": false
+		}
 	},
 	"react": {
-		"display": "hidden"
+		"display": "hidden",
+		"theme": {
+			"breadcrumb": false
+		}
 	},
 	"reactivity": {
-		"title": "Reactivity"
+		"title": "Reactivity",
+		"theme": {
+			"breadcrumb": false
+		}
 	},
 	"vite": {
 		"display": "hidden"
 	},
 	"testing": {
-		"display": "hidden"
+		"title": "Testing",
+		"theme": {
+			"breadcrumb": false
+		}
 	}
 }

@@ -55,7 +55,7 @@ function App() {
   const greeterService = useResolve(GreeterService);
 
   return (
-    <button onClick={() => greeterService.greet('hello!')}>click me</button>
+    <button type="button" onClick={() => greeterService.greet('hello!')}>click me</button>
   );
 }
 ```
@@ -162,10 +162,12 @@ controller.sayHello() // hello!
 Happy building!
 
 
-#### Quick Links
+#### Read more about Wox Inject
 
 <Cards>
   <Card title="Scopes" href="/scopes" />
+  <Card title="Reactivity" href="/reactivity" />
+  <Card title="Testing" href="/testing" />
 </Cards>
 
 <br />
@@ -194,6 +196,8 @@ export function FAQBox(props) {
 
 <FAQBox title="Is Wox Inject a state managment package?">
   No, Wox Inject have more in common with React's Context API than with state management libraries. Wox Inject allows a composition of logic to be shared across components.
+
+  You can read more about this in the [Reactivity](/reactivity) section.
 </FAQBox>
 
 <FAQBox title="Can I use Wox Inject without TypeScript">

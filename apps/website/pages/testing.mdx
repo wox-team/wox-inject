@@ -2,6 +2,79 @@ import { Callout } from 'nextra/components'
 
 # Testing
 
-<Callout emoji="ℹ️">
-	More info will be added soon.
-</Callout>
+Wox Inject provides mocking capabilities for testing. This is done by using a **TestBed**. A TestBed is a special Container that can be used to register mocks for your services.
+
+```tsx
+import { createTestBed } from '@wox-team/wox-inject';
+import { AReal } from './a-real';
+import { AMock } from './mocks/a-mock';
+
+test('should pass', () => {
+  const testBed = createTestBed();
+  testBed.mockRegister(AReal, AMock);
+
+  const sut = testBed.resolve(AReal); // instance of AMock
+
+  // ...
+});
+```
+
+To use the mocking capabilities in for your React components, you will need to wrap the test component in a `NewContainer` component.
+
+```tsx
+import { createTestBed, NewContainer } from '@wox-team/wox-inject';
+
+test('should pass', () => {
+  const testBed = createTestBed();
+  testBed.mockRegister(AReal, AMock);
+
+  render(
+    <NewContainer parentContainer={testBed.resolution}>
+      <YourComponent />
+    </NewContainer>
+  );
+
+  // ...
+});
+```
+
+Often you want to use the same mocks for multiple tests. In this case, you can create a helper function that creates a TestBed with all the mocks registered.
+
+```tsx
+// test/create-your-own-test-bed.ts
+
+import { createTestBed } from '@wox-team/wox-inject';
+import { AReal } from './a-real';
+import { AMock } from './mocks/a-mock';
+import { BReal } from './b-real';
+import { BMock } from './mocks/b-mock';
+import { CReal } from './c-real';
+import { CMock } from './mocks/c-mock';
+
+export function createYourOwnTestBed() {
+	const testBed = createTestBed();
+	testBed.mockRegister(AReal, AMock);
+	testBed.mockRegister(BReal, BMock);
+	testBed.mockRegister(CReal, CMock);
+
+	return testBed;
+}
+```
+
+```tsx
+// app/module.test.tsx
+
+import { createTestBed, NewContainer } from '@wox-team/wox-inject';
+
+test('should pass', () => {
+  const testBed = createYourOwnTestBed();
+
+  render(
+    <NewContainer parentContainer={testBed.resolution}>
+      <YourComponent />
+    </NewContainer>
+  );
+
+  // ...
+});
+```
