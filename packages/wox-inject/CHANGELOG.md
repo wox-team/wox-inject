@@ -1,5 +1,11 @@
 # @wox-team/wox-inject
 
+## 1.2.0
+
+### Minor Changes
+
+- [#18](https://github.com/wox-team/wox-inject/pull/18) [`91260b0`](https://github.com/wox-team/wox-inject/commit/91260b0f9624778a8ed8aa983c4ab7c3ef868d5d) Thanks [@EmilNordling](https://github.com/EmilNordling)! - Makes lifecycle tap-ins more intuitive
+
 ## 1.1.1
 
 ### Patch Changes

@@ -4,6 +4,13 @@
 
 ### Patch Changes
 
+- Updated dependencies [[`91260b0`](https://github.com/wox-team/wox-inject/commit/91260b0f9624778a8ed8aa983c4ab7c3ef868d5d)]:
+  - @wox-team/wox-inject@1.2.0
+
+## null
+
+### Patch Changes
+
 - Updated dependencies [[`f741a71`](https://github.com/wox-team/wox-inject/commit/f741a71e8daa898fa366b24b9a4de68db285d2c6)]:
   - @wox-team/wox-inject@1.1.1
 
