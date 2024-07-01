@@ -1,4 +1,4 @@
-import { test } from 'vitest';
+import { expect, test } from 'vitest';
 import { transform } from './vite_plugin';
 
 test('transform, when used on an class with empty constructor, should concat a 0 list naughtyReflection', () => {
@@ -157,5 +157,53 @@ test('transform, when weird it encounters weird TS 3 code, should not break', ()
 				}
 				Injectable.naughtyReflection(Test, [Bar]);
 		"
+	`);
+});
+
+test('transform, when "use container" is declared in function scope, should insert code correct code', () => {
+	const modified = transform(
+		`
+		import { Injectable } from '@wox-team/wox-inject';
+
+		function FnName() {
+		  "use container";
+		}
+
+		@Injectable()
+		class Foo {}
+		`,
+	);
+
+	expect(modified).toMatchInlineSnapshot(`
+		"
+				import { Injectable, withNewContainer } from '@wox-team/wox-inject';
+
+				const FnName = withNewContainer(function FnName() {
+				  \\"use container\\";
+				});
+
+				@Injectable()
+				class Foo {}
+				Injectable.naughtyReflection(Foo, []);
+		"
+	`);
+});
+
+test('transform, when "use container" is declared in function scope and no wox-inject import is found, should insert code correct code', () => {
+	const modified = transform(
+		`
+		function FnName() {
+		  "use container";
+		}
+		`,
+	);
+
+	expect(modified).toMatchInlineSnapshot(`
+		"import { withNewContainer } from '@wox-team/wox-inject';
+
+				const FnName = withNewContainer(function FnName() {
+				  \\"use container\\";
+				});
+				"
 	`);
 });
