@@ -1,5 +1,11 @@
 # @wox-team/wox-inject-vite
 
+## 0.3.1
+
+### Patch Changes
+
+- [`ab6f433`](https://github.com/wox-team/wox-inject/commit/ab6f4334b9907ce7127584eafd20707850abb92f) Thanks [@EmilNordling](https://github.com/EmilNordling)! - Bumps due to no files being published
+
 ## 0.3.0
 
 ### Minor Changes
