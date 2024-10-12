@@ -160,13 +160,15 @@ test('transform, when weird it encounters weird TS 3 code, should not break', ()
 	`);
 });
 
-test('transform, when "use container" is declared in function scope, should insert code correct code', () => {
+test.only('transform, when "use container" is declared in function scope, should insert correct code', () => {
 	const modified = transform(
 		`
 		import { Injectable } from '@wox-team/wox-inject';
 
-		function FnName() {
+		function FnName({ prop1, porp2 }) {
 		  "use container";
+
+			return <div />;
 		}
 
 		@Injectable()
@@ -176,11 +178,19 @@ test('transform, when "use container" is declared in function scope, should inse
 
 	expect(modified).toMatchInlineSnapshot(`
 		"
-				import { Injectable, withNewContainer } from '@wox-team/wox-inject';
+				import { Injectable, NewContainer } from '@wox-team/wox-inject';
 
-				const FnName = withNewContainer(function FnName() {
-				  \\"use container\\";
-				});
+				function __INNER_FnName__({ prop1, porp2 }) {
+				  return <div />;
+				}
+
+				function FnName(...__ARGS) {
+				  return (
+						<NewContainer>
+              <__INNER_FnName__ {...__ARGS} />
+						</NewContainer>
+					);
+				};
 
 				@Injectable()
 				class Foo {}

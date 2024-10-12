@@ -90,7 +90,7 @@ function hackyAFVisitorTransform(
 					let change = '';
 					const hasFunctionDeclaration = visitors.find((x) => x?.node?.type === 'FunctionDeclaration');
 					if (hasFunctionDeclaration) {
-						change = `import { ${[hasInjectSymbols ? 'Injectable' : null, 'withNewContainer']
+						change = `import { ${[hasInjectSymbols ? 'Injectable' : null, 'NewContainer']
 							.filter(Boolean)
 							.join(', ')} } from '@wox-team/wox-inject';\n`;
 					} else if (hasInjectSymbols) {
@@ -112,7 +112,7 @@ function hackyAFVisitorTransform(
 					const endIndex = lastSpecifier.end + state.i;
 
 					const before = state.src.slice(0, endIndex);
-					const change = ', withNewContainer';
+					const change = ', NewContainer';
 					const end = state.src.slice(endIndex);
 
 					state.i += change.length;
@@ -203,6 +203,11 @@ function findRelevantFunction(node: any): HackyVisitor | null {
 
 					const startIndex = n.start + state.i;
 					const endIndex = n.end + state.i;
+
+					{
+						const start = state.src.slice(startIndex, endIndex);
+						console.log(n);
+					}
 
 					const before = state.src.slice(0, startIndex);
 					const change1 = `const ${name} = withNewContainer(`;
