@@ -90,7 +90,7 @@ function hackyAFVisitorTransform(
 					let change = '';
 					const hasFunctionDeclaration = visitors.find((x) => x?.node?.type === 'FunctionDeclaration');
 					if (hasFunctionDeclaration) {
-						change = `import { ${[hasInjectSymbols ? 'Injectable' : null, 'withNewContainer']
+						change = `import { ${[hasInjectSymbols ? 'Injectable' : null, 'NewContainer']
 							.filter(Boolean)
 							.join(', ')} } from '@wox-team/wox-inject';\n`;
 					} else if (hasInjectSymbols) {
@@ -112,7 +112,7 @@ function hackyAFVisitorTransform(
 					const endIndex = lastSpecifier.end + state.i;
 
 					const before = state.src.slice(0, endIndex);
-					const change = ', withNewContainer';
+					const change = ', NewContainer';
 					const end = state.src.slice(endIndex);
 
 					state.i += change.length;
@@ -203,15 +203,30 @@ function findRelevantFunction(node: any): HackyVisitor | null {
 
 					const startIndex = n.start + state.i;
 					const endIndex = n.end + state.i;
+					const params = state.src.slice(n.params.start + state.i, n.params.end + state.i);
+					const body = state.src.slice(n.body.start + state.i, n.body.end + state.i);
 
 					const before = state.src.slice(0, startIndex);
-					const change1 = `const ${name} = withNewContainer(`;
-					const start = state.src.slice(startIndex, endIndex);
-					const change2 = ');';
+
+					const nameChange = `__INNER_${name}__`;
+					const change1 =
+						'function ' +
+						name +
+						'(...__ARGS) {' +
+						'return (' +
+						'<NewContainer>' +
+						'<__INNER_' +
+						name +
+						'__ {...__ARGS} />' +
+						'</NewContainer>' +
+						');' +
+						'}';
+					const change2 = '\n\nfunction ' + nameChange + params + body;
+
 					const end = state.src.slice(endIndex);
 
 					state.i += change1.length + change2.length;
-					state.src = before + change1 + start + change2 + end;
+					state.src = before + change1 + change2 + end;
 				},
 			});
 		}
