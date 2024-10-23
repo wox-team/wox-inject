@@ -1,5 +1,11 @@
 # @wox-team/wox-inject-vite
 
+## 0.4.0
+
+### Minor Changes
+
+- [#25](https://github.com/wox-team/wox-inject/pull/25) [`aaafdf6`](https://github.com/wox-team/wox-inject/commit/aaafdf6f68e287454e9df9b6c25afb1ec0adb957) Thanks [@EmilNordling](https://github.com/EmilNordling)! - Don't wrap return function with HoC
+
 ## 0.3.2
 
 ### Patch Changes
