@@ -4,6 +4,13 @@
 
 ### Patch Changes
 
+- Updated dependencies [[`aaafdf6`](https://github.com/wox-team/wox-inject/commit/aaafdf6f68e287454e9df9b6c25afb1ec0adb957)]:
+  - @wox-team/wox-inject-vite@0.4.0
+
+## null
+
+### Patch Changes
+
 - Updated dependencies [[`4dace18`](https://github.com/wox-team/wox-inject/commit/4dace1896421c8cadac7551f5da766e6e53b3978)]:
   - @wox-team/wox-inject@1.2.2
   - @wox-team/wox-inject-vite@0.3.2
